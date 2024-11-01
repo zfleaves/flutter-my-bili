@@ -230,6 +230,21 @@ class UserInfoWidget extends StatelessWidget {
           height: 34,
           src: userFace,
         ),
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => callback?.call(),
+              splashColor: Theme.of(context)
+                  .colorScheme
+                  .primaryContainer
+                  .withOpacity(0.3),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(50),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }

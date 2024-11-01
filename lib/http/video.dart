@@ -106,6 +106,30 @@ class VideoHttp {
     }
   }
 
+  static Future hotVideoList({required int pn, required int ps}) async {
+    try {
+      var res = await Request().get(
+        Api.hotList,
+        data: {'pn': pn, 'ps': ps},
+      );
+      if (res.data['code'] == 0) {
+        List<HotVideoItemModel> list = [];
+        List<int> blackMidsList =
+            setting.get(SettingBoxKey.blackMidsList, defaultValue: [-1]);
+        for (var i in res.data['data']['list']) {
+          if (!blackMidsList.contains(i['owner']['mid'])) {
+            list.add(HotVideoItemModel.fromJson(i));
+          }
+        }
+        return {'status': true, 'data': list};
+      } else {
+        return {'status': false, 'data': [], 'msg': res.data['message']};
+      }
+    } catch (err) {
+      return {'status': false, 'data': [], 'msg': err};
+    }
+  }
+
   // 操作用户关系
   static Future relationMod(
       {required int mid, required int act, required int reSrc}) async {

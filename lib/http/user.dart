@@ -21,6 +21,7 @@ class UserHttp {
   // 获取用户信息
   static Future<dynamic> userInfo() async {
     var res = await Request().get(Api.userInfo);
+    print('-获取用户信息-$res');
     if (res.data['code'] == 0) {
       UserInfoData data = UserInfoData.fromJson(res.data['data']);
       return {'status': true, 'data': data};

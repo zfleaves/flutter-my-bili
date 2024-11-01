@@ -107,6 +107,18 @@ dependencies:
   saver_gallery: ^3.0.1
   # 二维码
   qr_flutter: ^4.1.0
+  # cookie 管理
+  webview_cookie_manager: ^2.0.6
+  # 浏览器
+  webview_flutter: ^4.10.0
+  # 分享
+  share_plus: ^10.1.1
+  # 上拉加载
+  loading_more_list: ^7.1.0
+  # 下拉刷新
+  pull_to_refresh_notification: ^3.1.0
+  # 图标
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:

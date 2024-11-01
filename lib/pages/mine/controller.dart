@@ -21,6 +21,18 @@ class MineController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print(2222222);
+    if (userInfoCache.get('userInfoCache') != null) {
+      userInfo.value = userInfoCache.get('userInfoCache');
+      userLogin.value = true;
+    }
+
+    themeType.value = ThemeType.values[setting.get(SettingBoxKey.themeMode,
+        defaultValue: ThemeType.system.code)];
+  }
+
+  initMine () {
+    print(2222222);
     if (userInfoCache.get('userInfoCache') != null) {
       userInfo.value = userInfoCache.get('userInfoCache');
       userLogin.value = true;

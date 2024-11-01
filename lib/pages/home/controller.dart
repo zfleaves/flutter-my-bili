@@ -5,7 +5,6 @@ import 'package:bilibili/models/common/tab_type.dart';
 import 'package:bilibili/utils/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:hive/hive.dart';
 
 class HomeController extends GetxController with GetTickerProviderStateMixin {

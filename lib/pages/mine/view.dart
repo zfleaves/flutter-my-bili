@@ -21,6 +21,7 @@ class _MinePageState extends State<MinePage> {
   @override
   void initState() {
     super.initState();
+    mineController.initMine();
     _futureBuilderFuture = mineController.queryUserInfo();
     mineController.userLogin.listen((status) {
       if (mounted) {
@@ -107,23 +108,23 @@ class _MinePageState extends State<MinePage> {
     );
   }
 
-  Widget userInfoBuild(_mineController, context) {
+  Widget userInfoBuild(mineController, context) {
     return Column(
       children: [
         const SizedBox(height: 5),
         GestureDetector(
-          onTap: () => _mineController.onLogin(),
+          onTap: () => mineController.onLogin(),
           child: ClipOval(
             child: Container(
               width: 85,
               height: 85,
               color: Theme.of(context).colorScheme.onInverseSurface,
               child: Center(
-                child: _mineController.userInfo.value.face != null
+                child: mineController.userInfo.value.face != null
                     ? NetworkImgLayer(
                         width: 85,
                         height: 85,
-                        src: _mineController.userInfo.value.face,
+                        src: mineController.userInfo.value.face,
                       )
                     : Image.asset('assets/images/noface.jpeg'),
               ),
@@ -135,12 +136,12 @@ class _MinePageState extends State<MinePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _mineController.userInfo.value.uname ?? '点击头像登录',
+              mineController.userInfo.value.uname ?? '点击头像登录',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(width: 4),
             Image.asset(
-              'assets/images/lv/lv${_mineController.userInfo.value.levelInfo != null ? _mineController.userInfo.value.levelInfo!.currentLevel : '0'}.png',
+              'assets/images/lv/lv${mineController.userInfo.value.levelInfo != null ? mineController.userInfo.value.levelInfo!.currentLevel : '0'}.png',
               height: 10,
             ),
           ],
@@ -155,7 +156,7 @@ class _MinePageState extends State<MinePage> {
                 style: TextStyle(color: Theme.of(context).colorScheme.outline),
               ),
               TextSpan(
-                  text: (_mineController.userInfo.value.money ?? 'pilipala')
+                  text: (mineController.userInfo.value.money ?? 'pilipala')
                       .toString(),
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.primary)),
@@ -163,9 +164,9 @@ class _MinePageState extends State<MinePage> {
           ],
         ),
         const SizedBox(height: 25),
-        if (_mineController.userInfo.value.levelInfo != null) ...[
+        if (mineController.userInfo.value.levelInfo != null) ...[
           LayoutBuilder(builder: (context, BoxConstraints box) {
-            LevelInfo levelInfo = _mineController.userInfo.value.levelInfo;
+            LevelInfo levelInfo = mineController.userInfo.value.levelInfo;
             return SizedBox(
               width: box.maxWidth,
               height: 24,
@@ -198,9 +199,9 @@ class _MinePageState extends State<MinePage> {
                     bottom: 0,
                     child: Container(
                       width: box.maxWidth *
-                          (_mineController
+                          (mineController
                                   .userInfo.value.levelInfo!.currentExp! /
-                              _mineController
+                              mineController
                                   .userInfo.value.levelInfo!.nextExp!),
                       height: 1,
                       decoration: BoxDecoration(
@@ -230,7 +231,7 @@ class _MinePageState extends State<MinePage> {
                 childAspectRatio: 1.67,
                 children: <Widget>[
                   InkWell(
-                    onTap: () => _mineController.pushDynamic(),
+                    onTap: () => mineController.pushDynamic(),
                     borderRadius: StyleString.mdRadius,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -245,9 +246,9 @@ class _MinePageState extends State<MinePage> {
                             );
                           },
                           child: Text(
-                            (_mineController.userStat.value.dynamicCount ?? '_')
+                            (mineController.userStat.value.dynamicCount ?? '_')
                                 .toString(),
-                            key: ValueKey<String>(_mineController
+                            key: ValueKey<String>(mineController
                                 .userStat.value.dynamicCount
                                 .toString()),
                             style: style,
@@ -262,7 +263,7 @@ class _MinePageState extends State<MinePage> {
                     ),
                   ),
                   InkWell(
-                    onTap: () => _mineController.pushFollow(),
+                    onTap: () => mineController.pushFollow(),
                     borderRadius: StyleString.mdRadius,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -275,9 +276,9 @@ class _MinePageState extends State<MinePage> {
                                 scale: animation, child: child);
                           },
                           child: Text(
-                              (_mineController.userStat.value.following ?? '-')
+                              (mineController.userStat.value.following ?? '-')
                                   .toString(),
-                              key: ValueKey<String>(_mineController
+                              key: ValueKey<String>(mineController
                                   .userStat.value.following
                                   .toString()),
                               style: style),
@@ -291,7 +292,7 @@ class _MinePageState extends State<MinePage> {
                     ),
                   ),
                   InkWell(
-                      onTap: () => _mineController.pushFans(),
+                      onTap: () => mineController.pushFans(),
                       borderRadius: StyleString.mdRadius,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -304,9 +305,9 @@ class _MinePageState extends State<MinePage> {
                                   scale: animation, child: child);
                             },
                             child: Text(
-                                (_mineController.userStat.value.follower ?? '-')
+                                (mineController.userStat.value.follower ?? '-')
                                     .toString(),
-                                key: ValueKey<String>(_mineController
+                                key: ValueKey<String>(mineController
                                     .userStat.value.follower
                                     .toString()),
                                 style: style),
