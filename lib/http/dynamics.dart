@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bilibili/http/index.dart';
 import 'package:bilibili/models/dynamics/result.dart';
 import 'package:bilibili/models/dynamics/up.dart';
@@ -20,7 +22,8 @@ class DynamicsHttp {
       data['host_mid'] = mid;
       data.remove('timezone_offset');
     }
-    var res = Request().get(Api.followDynamic, data: data);
+    var res = await Request().get(Api.followDynamic, data: data);
+    print(res);
     if (res.data['code'] == 0) {
       try {
         return {
@@ -28,7 +31,6 @@ class DynamicsHttp {
           'data': DynamicsDataModel.fromJson(res.data['data']),
         };
       } catch (err) {
-        print(err);
         return {
           'status': false,
           'data': [],
@@ -62,6 +64,32 @@ class DynamicsHttp {
     }
   }
 
+  // 动态点赞
+  static Future likeDynamic({
+    required String? dynamicId,
+    required int? up,
+  }) async {
+    var res = await Request().post(
+      Api.likeDynamic,
+      queryParameters: {
+        'dynamic_id': dynamicId,
+        'up': up,
+        'csrf': await Request.getCsrf(),
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {
+        'status': true,
+        'data': res.data['data'],
+      };
+    } else {
+      return {
+        'status': false,
+        'data': [],
+        'msg': res.data['message'],
+      };
+    }
+  }
 
   static Future dynamicDetail({String? id,}) async {
     var res = await Request().get(Api.dynamicDetail, data: {
@@ -82,6 +110,63 @@ class DynamicsHttp {
           'msg': err.toString(),
         };
       }
+    } else {
+      return {
+        'status': false,
+        'data': [],
+        'msg': res.data['message'],
+      };
+    }
+  }
+
+  // 转发 发布
+  static Future dynamicCreate({
+    required int mid,
+    required int scene,
+    int? oid,
+    String? dynIdStr,
+    String? rawText,
+  }) async {
+    DateTime now = DateTime.now();
+    int timestamp = now.millisecondsSinceEpoch ~/ 1000;
+    Random random = Random();
+    int randomNumber = random.nextInt(9000) + 1000;
+    String uploadId = '${mid}_${timestamp}_$randomNumber';
+    Map<String, dynamic> webRepostSrc = {
+      'dyn_id_str': dynIdStr ?? '',
+    };
+    /// 投稿转发
+    if (scene == 5) {
+      webRepostSrc = {
+        'revs_id': {'dyn_type': 8, 'rid': oid}
+      };
+    }
+     var res = await Request().post(Api.dynamicCreate, queryParameters: {
+      'platform': 'web',
+      'csrf': await Request.getCsrf(),
+      'x-bili-device-req-json': {'platform': 'web', 'device': 'pc'},
+      'x-bili-web-req-json': {'spm_id': '333.999'},
+    }, data: {
+      'dyn_req': {
+        'content': {
+          'contents': [
+            {'raw_text': rawText ?? '', 'type': 1, 'biz_id': ''}
+          ]
+        },
+        'scene': scene,
+        'attach_card': null,
+        'upload_id': uploadId,
+        'meta': {
+          'app_meta': {'from': 'create.dynamic.web', 'mobi_app': 'web'}
+        }
+      },
+      'web_repost_src': webRepostSrc
+    });
+    if (res.data['code'] == 0) {
+      return {
+        'status': true,
+        'data': res.data['data'],
+      };
     } else {
       return {
         'status': false,

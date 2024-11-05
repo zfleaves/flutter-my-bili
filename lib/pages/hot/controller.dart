@@ -21,7 +21,6 @@ class HotController extends GetxController {
       pn: _currentPage,
       ps: _count,
     );
-    print(res);
     if (res['status']) {
       if (type == 'init') {
         videoList.value = res['data'];

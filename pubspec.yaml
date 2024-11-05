@@ -119,6 +119,9 @@ dependencies:
   pull_to_refresh_notification: ^3.1.0
   # 图标
   font_awesome_flutter: ^10.7.0
+  # 下滑关闭
+  custom_sliding_segmented_control: ^1.8.3
+  dismissible_page: ^1.0.2
 
 dev_dependencies:
   flutter_test:

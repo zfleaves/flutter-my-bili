@@ -42,6 +42,9 @@ class _MainAppState extends State<MainApp> {
   }
 
   void setIndex(int value) async {
+    setState(() {
+      _mainController.selectedIndex = value;
+    });
     feedBack();
     _mainController.pageController.jumpToPage(value);
     var currentPage = _mainController.pages[value];
@@ -107,6 +110,7 @@ class _MainAppState extends State<MainApp> {
     return NavigationBar(
         onDestinationSelected: (value) => setIndex(value),
         selectedIndex: _mainController.selectedIndex,
+        // indicatorColor: Colors.red,
         destinations: <Widget>[
           ..._mainController.navigationBars.map((e) {
             return NavigationDestination(

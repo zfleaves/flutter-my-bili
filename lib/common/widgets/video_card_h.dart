@@ -178,6 +178,7 @@ class VideoContent extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 6, 0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (source == 'normal' || source == 'later') ...[
               Text(

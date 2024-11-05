@@ -74,13 +74,17 @@ class _HotPageState extends State<HotPage> with AutomaticKeepAliveClientMixin {
                   }
                   Map data = snapshot.data as Map;
                   if (data['status']) {
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        return VideoCardH(
-                          videoItem: _hotController.videoList[index],
-                          showPubdate: true,
-                        );
-                      }, childCount: _hotController.videoList.length),
+                    return Obx(
+                      () {
+                        return SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return VideoCardH(
+                            videoItem: _hotController.videoList[index],
+                            showPubdate: true,
+                          );
+                        }, childCount: _hotController.videoList.length),
+                      );
+                      }
                     );
                   }
                   return HttpError(

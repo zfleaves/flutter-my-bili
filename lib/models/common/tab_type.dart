@@ -50,7 +50,7 @@ List tabsConfig = [
     ),
     'label': '番剧',
     'type': TabType.bangumi,
-    'ctr': Get.find<BangumiController>,
+    'ctr': Get.find<BangumidController>,
     'page': const BangumiPage(),
   },
 ];
