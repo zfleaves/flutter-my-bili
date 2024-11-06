@@ -229,7 +229,7 @@ class PlPlayerController {
   late double fontSizeVal;
   late double strokeWidth;
   late double danmakuDurationVal;
-  late List<double> speedsList;
+  late List speedsList;
   // 缓存
   double? defaultDuration;
   late bool enableAutoLongPressSpeed = false;
@@ -302,15 +302,15 @@ class PlPlayerController {
           .get(VideoBoxKey.longPressSpeedDefault, defaultValue: 2.0);
     }
     // 自定义倍速集合
-    speedsList = List<double>.from(videoStorage
+    speedsList = List.from(videoStorage
         .get(VideoBoxKey.customSpeedsList, defaultValue: <double>[]));
     // 默认倍速
-    speedsList = List<double>.from(videoStorage
+    speedsList = List.from(videoStorage
         .get(VideoBoxKey.customSpeedsList, defaultValue: <double>[]));
     //playSpeedSystem
-    final List<double> playSpeedSystem =
+    final List playSpeedSystem =
         videoStorage.get(VideoBoxKey.playSpeedSystem, defaultValue: playSpeed);
-
+    print(playSpeedSystem);
     // for (final PlaySpeed i in PlaySpeed.values) {
     speedsList.addAll(playSpeedSystem);
     // }

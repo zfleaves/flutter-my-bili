@@ -115,7 +115,7 @@ class SettingController extends GetxController {
   }
 
   // 设置默认启动页
-  seteDefaultHomePage(BuildContext context) async {
+  setDefaultHomePage(BuildContext context) async {
     int? result = await showDialog(
       context: context,
       builder: (context) {

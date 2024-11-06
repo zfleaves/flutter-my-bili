@@ -30,7 +30,6 @@ class PiliLogger extends Logger {
     super.log(level, "$message", error: error, stackTrace: stackTrace);
   }
 }
-
 Future<File> getLogsPath() async {
   String dir = (await getApplicationDocumentsDirectory()).path;
   final String filename = p.join(dir, ".pili_logs");

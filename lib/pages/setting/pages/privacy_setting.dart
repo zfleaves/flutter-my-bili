@@ -1,4 +1,9 @@
+import 'package:bilibili/http/member.dart';
+import 'package:bilibili/utils/storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
 class PrivacySetting extends StatefulWidget {
   const PrivacySetting({super.key});
@@ -8,11 +13,60 @@ class PrivacySetting extends StatefulWidget {
 }
 
 class _PrivacySettingState extends State<PrivacySetting> {
+  bool userLogin = false;
+  Box userInfoCache = GStrorage.userInfo;
+  var userInfo;
+
+  @override
+  void initState() {
+    userInfo = userInfoCache.get('userInfoCache');
+    userLogin = userInfo != null;
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
+    TextStyle titleStyle = Theme.of(context).textTheme.titleMedium!;
+    TextStyle subTitleStyle = Theme.of(context)
+        .textTheme
+        .labelMedium!
+        .copyWith(color: Theme.of(context).colorScheme.outline);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('隐私设置'),
+        centerTitle: false,
+        titleSpacing: 0,
+        title: Text(
+          '隐私设置',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      ),
+      body: Column(
+        children: [
+          ListTile(
+            onTap: () {
+              if (!userLogin) {
+                SmartDialog.showToast('登录后查看');
+                return;
+              }
+              Get.toNamed('/blackListPage');
+            },
+            dense: false,
+            title: Text('黑名单管理', style: titleStyle),
+            subtitle: Text('已拉黑用户', style: subTitleStyle),
+          ),
+          ListTile(
+            onTap: () {
+              if (!userLogin) {
+                SmartDialog.showToast('请先登录');
+              }
+              MemberHttp.cookieToKey();
+            },
+            dense: false,
+            title: Text('刷新access_key', style: titleStyle),
+          ),
+        ],
       ),
     );
   }

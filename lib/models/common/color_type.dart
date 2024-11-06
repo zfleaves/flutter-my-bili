@@ -19,5 +19,6 @@ final List<Map<String, dynamic>> colorThemeTypes = [
   {'color': Colors.deepPurple, 'label': '深紫色'},
   {'color': Colors.blueGrey, 'label': '蓝灰色'},
   {'color': Colors.brown, 'label': '棕色'},
+  {'color': Colors.white, 'label': '白色'},
   {'color': Colors.grey, 'label': '灰色'},
 ];
