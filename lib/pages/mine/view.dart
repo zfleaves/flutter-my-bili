@@ -15,7 +15,7 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
-  final MineController mineController = MineController();
+  final MineController mineController = Get.put(MineController());
   late Future _futureBuilderFuture;
 
   @override
