@@ -28,7 +28,8 @@ class AuthorPanel extends StatelessWidget {
               '/member?mid=${item.modules.moduleAuthor.mid}',
               arguments: {
                 'face': item.modules.moduleAuthor.face,
-                'heroTag': heroTag
+                'heroTag': heroTag,
+                'uname': item.modules.moduleAuthor.name,
               },
             );
           },

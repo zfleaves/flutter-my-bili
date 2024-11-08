@@ -32,7 +32,10 @@ Widget videoSeasonWidget(item, context, type, {floor = 1}) {
             GestureDetector(
               onTap: () => Get.toNamed(
                   '/member?mid=${item.modules.moduleAuthor.mid}',
-                  arguments: {'face': item.modules.moduleAuthor.face}),
+                  arguments: {
+                    'face': item.modules.moduleAuthor.face,
+                    'uname': item.modules.moduleAuthor.name
+                  }),
               child: Text(
                 item.modules.moduleAuthor.type == null
                     ? '@${item.modules.moduleAuthor.name}'

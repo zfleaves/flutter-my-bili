@@ -17,7 +17,10 @@ Widget livePanel(item, context, {floor = 1}) {
             GestureDetector(
               onTap: () => Get.toNamed(
                   '/member?mid=${item.modules.moduleAuthor.mid}',
-                  arguments: {'face': item.modules.moduleAuthor.face}),
+                  arguments: {
+                    'face': item.modules.moduleAuthor.face,
+                    'uname': item.modules.moduleAuthor.name
+                  }),
               child: Text(
                 '@${item.modules.moduleAuthor.name}',
                 style: authorStyle,

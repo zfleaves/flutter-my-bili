@@ -47,7 +47,10 @@ class BillSchame {
           final String mid = path.split('/').last;
           Get.toNamed<dynamic>(
             '/member?mid=$mid',
-            arguments: <String, dynamic>{'face': null},
+            arguments: <String, dynamic>{
+              'face': null,
+              'uname': null
+            },
           );
           break;
         case 'video':
@@ -184,7 +187,7 @@ class BillSchame {
       );
     } else if (host.contains('space')) {
       var mid = path!.split('/').last;
-      Get.toNamed('/member?mid=$mid', arguments: {'face': ''});
+      Get.toNamed('/member?mid=$mid', arguments: {'face': '', 'uname': ''});
       return;
     } else if (host == 'b23.tv') {
       final String fullPath = 'https://$host$path';
@@ -252,7 +255,7 @@ class BillSchame {
           break;
         case 'space':
           print('个人空间');
-          Get.toNamed('/member?mid=$area', arguments: {'face': ''});
+          Get.toNamed('/member?mid=$area', arguments: {'face': '', 'uname': ''});
           break;
         default:
           final Map<String, dynamic> map =

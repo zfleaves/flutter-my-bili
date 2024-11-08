@@ -33,6 +33,7 @@ class LoginUtils {
       MediaController mediaCtr = Get.find<MediaController>();
       mediaCtr.userLogin.value = status;
     } catch (err) {
+      print('refreshLoginStatus error: ${err.toString()}');
       SmartDialog.showToast('refreshLoginStatus error: ${err.toString()}');
     }
   }

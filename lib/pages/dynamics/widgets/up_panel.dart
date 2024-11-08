@@ -169,7 +169,7 @@ class _UpPanelState extends State<UpPanel> {
         }
         String heroTag = Utils.makeHeroTag(data.mid);
         Get.toNamed('/member?mid=${data.mid}',
-            arguments: {'face': data.face, 'heroTag': heroTag});
+            arguments: {'face': data.face, 'heroTag': heroTag, 'uname': data.uname});
       },
       child: Padding(
         padding: itemPadding,

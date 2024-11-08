@@ -51,7 +51,10 @@ class MineController extends GetxController {
       String face = userInfo.value.face!;
       Get.toNamed(
         '/member?mid=$mid',
-        arguments: {'face': face},
+        arguments: {
+          'face': face,
+          'uname': userInfo.value.uname!
+        },
       );
     }
   }

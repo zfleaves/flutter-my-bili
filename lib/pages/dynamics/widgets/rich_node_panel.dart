@@ -53,7 +53,7 @@ InlineSpan richNode(item, context) {
                 children: [
                   GestureDetector(
                     onTap: () => Get.toNamed('/member?mid=${i.rid}',
-                        arguments: {'face': null}),
+                        arguments: {'face': null, 'uname': null}),
                     child: Text(
                       ' ${i.text}',
                       style: authorStyle,

@@ -102,6 +102,21 @@ class UserHttp {
     }
   }
 
+  // 查询关系
+  static Future hasFollow(int mid) async {
+    var res = await Request().get(
+      Api.hasFollow,
+      data: {
+        'fid': mid,
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'msg': res.data['message']};
+    }
+  }
+
     // 观看历史暂停状态
   static Future historyStatus() async {
     var res = await Request().get(Api.historyStatus);
