@@ -59,21 +59,21 @@ class _WhisperDetailPageState extends State<WhisperDetailPage> with WidgetsBindi
     if (mounted && routePath.startsWith('/whisperDetail')) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // 键盘高度
-        final viewInsets = EdgeInsets.fromViewPadding(
-            View.of(context).viewInsets, View.of(context).devicePixelRatio);
-        _debouncer.run(() {
-          if (mounted) {
-            if (keyboardHeight == 0) {
-              setState(() {
-                keyboardHeight =
-                    keyboardHeight == 0.0 ? viewInsets.bottom : keyboardHeight;
-                if (keyboardHeight != 0) {
-                  emoteHeight = keyboardHeight;
-                }
-              });
-            }
-          }
-        });
+        // final viewInsets = EdgeInsets.fromViewPadding(
+        //     View.of(context).viewInsets, View.of(context).devicePixelRatio);
+        // _debouncer.run(() {
+        //   if (mounted) {
+        //     if (keyboardHeight == 0) {
+        //       setState(() {
+        //         keyboardHeight =
+        //             keyboardHeight == 0.0 ? viewInsets.bottom : keyboardHeight;
+        //         if (keyboardHeight != 0) {
+        //           emoteHeight = keyboardHeight;
+        //         }
+        //       });
+        //     }
+        //   }
+        // });
       });
     }
   }

@@ -1,9 +1,12 @@
+import 'dart:developer';
 import 'package:bilibili/common/constants.dart';
 import 'package:bilibili/http/api.dart';
 import 'package:bilibili/http/init.dart';
+import 'package:bilibili/models/common/reply_type.dart';
 import 'package:bilibili/models/home/rcmd/result.dart';
 import 'package:bilibili/models/model_hot_video_item.dart';
 import 'package:bilibili/models/model_rec_video_item.dart';
+import 'package:bilibili/models/video_detail_res.dart';
 import 'package:bilibili/utils/recommend_filter.dart';
 import 'package:hive/hive.dart';
 import '../utils/storage.dart';
@@ -127,6 +130,73 @@ class VideoHttp {
       }
     } catch (err) {
       return {'status': false, 'data': [], 'msg': err};
+    }
+  }
+
+  // 视频信息 标题、简介
+  static Future videoIntro({required String bvid}) async {
+    var res = await Request().get(Api.videoIntro, data: {'bvid': bvid});
+    if (res.data['code'] == 0) {
+      VideoDetailResponse result = VideoDetailResponse.fromJson(res.data);
+      return {'status': true, 'data': result.data!};
+    } else {
+      return {
+        'status': false,
+        'data': null,
+        'code': res.data['code'],
+        'msg': res.data['message'],
+      };
+    }
+  }
+
+  // （取消）收藏
+  static Future favVideo(
+      {required int aid, String? addIds, String? delIds}) async {
+    var res = await Request().post(Api.favVideo, queryParameters: {
+      'rid': aid,
+      'type': 2,
+      'add_media_ids': addIds ?? '',
+      'del_media_ids': delIds ?? '',
+      'csrf': await Request.getCsrf(),
+    });
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': [], 'msg': res.data['message']};
+    }
+  }
+
+  // 发表评论 replyAdd
+
+  // type	num	评论区类型代码	必要	类型代码见表
+  // oid	num	目标评论区id	必要
+  // root	num	根评论rpid	非必要	二级评论以上使用
+  // parent	num	父评论rpid	非必要	二级评论同根评论id 大于二级评论为要回复的评论id
+  // message	str	发送评论内容	必要	最大1000字符
+  // plat	num	发送平台标识	非必要	1：web端 2：安卓客户端  3：ios客户端  4：wp客户端
+  static Future replyAdd({
+    required ReplyType type,
+    required int oid,
+    required String message,
+    int? root,
+    int? parent,
+  }) async {
+    if (message == '') {
+      return {'status': false, 'data': [], 'msg': '请输入评论内容'};
+    }
+    var res = await Request().post(Api.replyAdd, queryParameters: {
+      'type': type.index,
+      'oid': oid,
+      'root': root == null || root == 0 ? '' : root,
+      'parent': parent == null || parent == 0 ? '' : parent,
+      'message': message,
+      'csrf': await Request.getCsrf(),
+    });
+    log(res.toString());
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': [], 'msg': res.data['message']};
     }
   }
 

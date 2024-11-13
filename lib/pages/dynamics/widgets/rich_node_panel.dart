@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 
-
 InlineSpan richNode(item, context) {
   final spacer = _VerticalSpaceSpan(0.0);
   try {
@@ -247,8 +246,6 @@ InlineSpan richNode(item, context) {
     return spacer;
   }
 }
-
-
 class _VerticalSpaceSpan extends WidgetSpan {
   _VerticalSpaceSpan(double height)
       : super(child: SizedBox(height: height, width: double.infinity));

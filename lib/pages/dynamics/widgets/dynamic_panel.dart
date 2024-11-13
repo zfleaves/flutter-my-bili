@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DynamicPanel extends StatelessWidget {
-  final DynamicItemModel item;
+  // final DynamicItemModel item;
+  final dynamic item;
   final String? source;
   DynamicPanel({super.key, required this.item, this.source});
   final DynamicsController _dynamicsController = Get.put(DynamicsController());

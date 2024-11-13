@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bilibili/common/widgets/network_img_layer.dart';
 import 'package:bilibili/pages/dynamics/widgets/additional_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/article_panel.dart';
@@ -5,13 +7,14 @@ import 'package:bilibili/pages/dynamics/widgets/live_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/live_rcmd_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/pic_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/rich_node_panel.dart';
+import 'package:bilibili/pages/dynamics/widgets/rich_node_panel2.dart';
 import 'package:bilibili/pages/dynamics/widgets/video_panel.dart';
 import 'package:bilibili/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-Widget forWard(item, context, ctr, source, {floor = 1}) {
+Widget forWard(dynamic item, context, ctr, source, {floor = 1}) {
   TextStyle authorStyle =
       TextStyle(color: Theme.of(context).colorScheme.primary);
   switch (item.type) {
@@ -81,12 +84,16 @@ Widget forWard(item, context, ctr, source, {floor = 1}) {
     // 转发
     case 'DYNAMIC_TYPE_FORWARD':
       return InkWell(
-        onTap: () => ctr.pushDetail(item.orig, floor + 1),
+        onTap: () {
+          ctr.pushDetail(item.orig, floor + 1);
+          log(item.orig.type);
+        },
         child: Container(
           padding:
               const EdgeInsets.only(left: 15, top: 10, right: 15, bottom: 8),
           color: Theme.of(context).dividerColor.withOpacity(0.08),
           child: forWard(item.orig, context, ctr, source, floor: floor + 1),
+          // child: Text('data'),
         ),
       );
     // 直播

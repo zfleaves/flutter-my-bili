@@ -19,7 +19,7 @@ class FollowItem extends StatelessWidget {
       onTap: () {
         feedBack();
         Get.toNamed('/member?mid=${item.mid}',
-            arguments: {'face': item.face, 'heroTag': heroTag});
+            arguments: {'face': item.face, 'heroTag': heroTag, 'uname': item.uname});
       },
       leading: Hero(
         tag: heroTag,
