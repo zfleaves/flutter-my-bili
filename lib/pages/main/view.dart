@@ -37,8 +37,8 @@ class _MainAppState extends State<MainApp> {
     _lastSelectTime = DateTime.now().microsecondsSinceEpoch;
     _mainController.pageController =
         PageController(initialPage: _mainController.selectedIndex);
-    print(_mainController.navigationBars);
-    print(GlobalData().enableMYBar);
+    // print(_mainController.navigationBars);
+    // print(GlobalData().enableMYBar);
   }
 
   void setIndex(int value) async {

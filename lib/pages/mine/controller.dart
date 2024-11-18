@@ -2,11 +2,13 @@ import 'package:bilibili/http/user.dart';
 import 'package:bilibili/models/common/theme_type.dart';
 import 'package:bilibili/models/user/info.dart';
 import 'package:bilibili/models/user/stat.dart';
+import 'package:bilibili/pages/dynamics/controller.dart';
 import 'package:bilibili/utils/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
 
 class MineController extends GetxController {
   // 用户信息 头像、昵称、lv
@@ -21,7 +23,6 @@ class MineController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print(2222222);
     if (userInfoCache.get('userInfoCache') != null) {
       userInfo.value = userInfoCache.get('userInfoCache');
       userLogin.value = true;
@@ -32,7 +33,6 @@ class MineController extends GetxController {
   }
 
   initMine () {
-    print(2222222);
     if (userInfoCache.get('userInfoCache') != null) {
       userInfo.value = userInfoCache.get('userInfoCache');
       userLogin.value = true;
@@ -123,6 +123,8 @@ class MineController extends GetxController {
 
   // 关注
   pushFollow() {
+    // DynamicsController dynamicsCtr = Get.find<DynamicsController>();
+    // dynamicsCtr.test.value = (DateTime.now().millisecondsSinceEpoch / 1000).round().toString();
     if (!userLogin.value) {
       SmartDialog.showToast('账号未登录');
       return;

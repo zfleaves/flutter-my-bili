@@ -126,6 +126,20 @@ dependencies:
   html: ^0.15.4
   # html渲染
   flutter_html: ^3.0.0-beta.2
+  # pip
+  floating:
+    git:
+      url: https://github.com/guozhigq/floating.git
+      ref: main
+  # 投屏
+  dlna_dart: ^0.0.8
+  lottie: ^3.1.2
+  # 解决sliver滑动不同步
+  extended_nested_scroll_view: ^6.2.1
+  # 电池优化
+  disable_battery_optimization: ^1.1.1
+  # 展开/收起
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:

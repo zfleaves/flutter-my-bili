@@ -65,4 +65,52 @@ class HtmlHttp {
       print('err: $err');
     }
   }
+
+  // read
+  static Future reqReadHtml(id, dynamicType) async {
+    var response = await Request().get(
+      "https://www.bilibili.com/$dynamicType/$id/",
+      extra: {'ua': 'pc'},
+    );
+    if (response.data.contains('Redirecting to')) {
+      RegExp regex = RegExp(r'//([\w\.]+)/(\w+)/(\w+)');
+      Match match = regex.firstMatch(response.data)!;
+      String matchedString = match.group(0)!;
+      response = await Request().get(
+        'https:$matchedString/',
+        extra: {'ua': 'pc'},
+      );
+    }
+    Document rootTree = parse(response.data);
+    Element body = rootTree.body!;
+    Element appDom = body.querySelector('#app')!;
+    Element authorHeader = appDom.querySelector('.up-left')!;
+
+    // 头像
+    // String avatar =
+    //     authorHeader.querySelector('.bili-avatar-img')!.attributes['data-src']!;
+    // print(avatar);
+    // avatar = 'https:${avatar.split('@')[0]}';
+    String uname = authorHeader.querySelector('.up-name')!.text.trim();
+    // 动态详情
+    Element opusDetail = appDom.querySelector('.article-content')!;
+    // 发布时间
+    // String updateTime =
+    //     opusDetail.querySelector('.opus-module-author__pub__text')!.text;
+    // print(updateTime);
+
+    String opusContent =
+        opusDetail.querySelector('#read-article-holder')!.innerHtml;
+    RegExp digitRegExp = RegExp(r'\d+');
+    Iterable<Match> matches = digitRegExp.allMatches(id);
+    String number = matches.first.group(0)!;
+    return {
+      'status': true,
+      'avatar': '',
+      'uname': uname,
+      'updateTime': '',
+      'content': opusContent,
+      'commentId': int.parse(number)
+    };
+  }
 }

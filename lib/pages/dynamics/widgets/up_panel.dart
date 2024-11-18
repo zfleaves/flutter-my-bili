@@ -174,8 +174,8 @@ class _UpPanelState extends State<UpPanel> {
       child: Padding(
         padding: itemPadding,
         child: AnimatedOpacity(
-          // opacity: isCurrent ? 1 : 0.9,
-          opacity: 1,
+          opacity: isCurrent ? 1 : 0.3,
+          // opacity: 1,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           child: Column(

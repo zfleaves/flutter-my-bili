@@ -9,6 +9,14 @@ import 'package:bilibili/models/user/stat.dart';
 import 'package:bilibili/models/user/sub_folder.dart';
 
 class UserHttp {
+  static Future<dynamic> userStat({required int mid}) async {
+    var res = await Request().get(Api.userStat, data: {'vmid': mid});
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false};
+    }
+  }
 
   // 获取当前用户状态
   static Future<dynamic> userStatOwner() async {

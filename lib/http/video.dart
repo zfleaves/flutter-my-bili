@@ -6,8 +6,14 @@ import 'package:bilibili/models/common/reply_type.dart';
 import 'package:bilibili/models/home/rcmd/result.dart';
 import 'package:bilibili/models/model_hot_video_item.dart';
 import 'package:bilibili/models/model_rec_video_item.dart';
+import 'package:bilibili/models/user/fav_folder.dart';
+import 'package:bilibili/models/video/ai.dart';
+import 'package:bilibili/models/video/play/url.dart';
+import 'package:bilibili/models/video/subTitile/result.dart';
 import 'package:bilibili/models/video_detail_res.dart';
 import 'package:bilibili/utils/recommend_filter.dart';
+import 'package:bilibili/utils/subtitle.dart';
+import 'package:bilibili/utils/wbi_sign.dart';
 import 'package:hive/hive.dart';
 import '../utils/storage.dart';
 
@@ -133,6 +139,56 @@ class VideoHttp {
     }
   }
 
+  // 视频流
+  static Future videoUrl(
+      {int? avid, String? bvid, required int cid, int? qn}) async {
+    Map<String, dynamic> data = {
+      'cid': cid,
+      'qn': qn ?? 80,
+      // 获取所有格式的视频
+      'fnval': 4048,
+    };
+    if (avid != null) {
+      data['avid'] = avid;
+    }
+    if (bvid != null) {
+      data['bvid'] = bvid;
+    }
+
+    // 免登录查看1080p
+    if (userInfoCache.get('userInfoCache') == null &&
+        setting.get(SettingBoxKey.p1080, defaultValue: true)) {
+      data['try_look'] = 1;
+    }
+
+    Map params = await WbiSign().makSign({
+      ...data,
+      'fourk': 1,
+      'voice_balance': 1,
+      'gaia_source': 'pre-load',
+      'web_location': 1550101,
+    });
+
+    try {
+      var res = await Request().get(Api.videoUrl, data: params);
+      if (res.data['code'] == 0) {
+        return {
+          'status': true,
+          'data': PlayUrlModel.fromJson(res.data['data'])
+        };
+      } else {
+        return {
+          'status': false,
+          'data': [],
+          'code': res.data['code'],
+          'msg': res.data['message'],
+        };
+      }
+    } catch (err) {
+      return {'status': false, 'data': [], 'msg': err};
+    }
+  }
+
   // 视频信息 标题、简介
   static Future videoIntro({required String bvid}) async {
     var res = await Request().get(Api.videoIntro, data: {'bvid': bvid});
@@ -146,6 +202,105 @@ class VideoHttp {
         'code': res.data['code'],
         'msg': res.data['message'],
       };
+    }
+  }
+
+  // 相关视频
+  static Future relatedVideoList({required String bvid}) async {
+    var res = await Request().get(Api.relatedList, data: {'bvid': bvid});
+    if (res.data['code'] == 0) {
+      List<HotVideoItemModel> list = [];
+      for (var i in res.data['data']) {
+        HotVideoItemModel videoItem = HotVideoItemModel.fromJson(i);
+        if (!RecommendFilter.filter(videoItem, relatedVideos: true)) {
+          list.add(videoItem);
+        }
+      }
+      return {'status': true, 'data': list};
+    } else {
+      return {'status': false, 'data': []};
+    }
+  }
+
+  // 获取点赞状态
+  static Future hasLikeVideo({required String bvid}) async {
+    var res = await Request().get(Api.hasLikeVideo, data: {'bvid': bvid});
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': []};
+    }
+  }
+
+  // 获取投币状态
+  static Future hasCoinVideo({required String bvid}) async {
+    var res = await Request().get(Api.hasCoinVideo, data: {'bvid': bvid});
+    print('res: $res');
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': []};
+    }
+  }
+
+  // 投币
+  static Future coinVideo({required String bvid, required int multiply}) async {
+    var res = await Request().post(
+      Api.coinVideo,
+      queryParameters: {
+        'bvid': bvid,
+        'multiply': multiply,
+        'select_like': 0,
+        'csrf': await Request.getCsrf(),
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': [], 'msg': res.data['message']};
+    }
+  }
+
+  // 获取收藏状态
+  static Future hasFavVideo({required int aid}) async {
+    var res = await Request().get(Api.hasFavVideo, data: {'aid': aid});
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': []};
+    }
+  }
+
+  // 一键三连
+  static Future oneThree({required String bvid}) async {
+    var res = await Request().post(
+      Api.oneThree,
+      queryParameters: {
+        'bvid': bvid,
+        'csrf': await Request.getCsrf(),
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': [], 'msg': res.data['message']};
+    }
+  }
+
+  // （取消）点赞
+  static Future likeVideo({required String bvid, required bool type}) async {
+    var res = await Request().post(
+      Api.likeVideo,
+      queryParameters: {
+        'bvid': bvid,
+        'like': type ? 1 : 2,
+        'csrf': await Request.getCsrf(),
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': [], 'msg': res.data['message']};
     }
   }
 
@@ -163,6 +318,18 @@ class VideoHttp {
       return {'status': true, 'data': res.data['data']};
     } else {
       return {'status': false, 'data': [], 'msg': res.data['message']};
+    }
+  }
+
+  // 查看视频被收藏在哪个文件夹
+  static Future videoInFolder({required int mid, required int rid}) async {
+    var res = await Request()
+        .get(Api.videoInFolder, data: {'up_mid': mid, 'rid': rid});
+    if (res.data['code'] == 0) {
+      FavFolderData data = FavFolderData.fromJson(res.data['data']);
+      return {'status': true, 'data': data};
+    } else {
+      return {'status': false, 'data': []};
     }
   }
 
@@ -197,6 +364,16 @@ class VideoHttp {
       return {'status': true, 'data': res.data['data']};
     } else {
       return {'status': false, 'data': [], 'msg': res.data['message']};
+    }
+  }
+
+  // 查询是否关注up
+  static Future hasFollow({required int mid}) async {
+    var res = await Request().get(Api.hasFollow, data: {'fid': mid});
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': []};
     }
   }
 
@@ -239,6 +416,86 @@ class VideoHttp {
     });
   }
 
+  // 添加追番
+  static Future bangumiAdd({int? seasonId}) async {
+    var res = await Request().post(Api.bangumiAdd, queryParameters: {
+      'season_id': seasonId,
+      'csrf': await Request.getCsrf(),
+    });
+    if (res.data['code'] == 0) {
+      return {'status': true, 'msg': res.data['result']['toast']};
+    } else {
+      return {'status': false, 'msg': res.data['result']['toast']};
+    }
+  }
+
+  // 取消追番
+  static Future bangumiDel({int? seasonId}) async {
+    var res = await Request().post(Api.bangumiDel, queryParameters: {
+      'season_id': seasonId,
+      'csrf': await Request.getCsrf(),
+    });
+    if (res.data['code'] == 0) {
+      return {'status': true, 'msg': res.data['result']['toast']};
+    } else {
+      return {'status': false, 'msg': res.data['result']['toast']};
+    }
+  }
+
+  // 查看视频同时在看人数
+  static Future onlineTotal({int? aid, String? bvid, int? cid}) async {
+    var res = await Request().get(Api.onlineTotal, data: {
+      'aid': aid,
+      'bvid': bvid,
+      'cid': cid,
+    });
+    if (res.data['code'] == 0) {
+      return {'status': true, 'data': res.data['data']};
+    } else {
+      return {'status': false, 'data': null, 'msg': res.data['message']};
+    }
+  }
+
+  static Future aiConclusion({
+    String? bvid,
+    int? cid,
+    int? upMid,
+  }) async {
+    Map params = await WbiSign().makSign({
+      'bvid': bvid,
+      'cid': cid,
+      'up_mid': upMid,
+    });
+    var res = await Request().get(Api.aiConclusion, data: params);
+    if (res.data['code'] == 0 && res.data['data']['code'] == 0) {
+      return {
+        'status': true,
+        'data': AiConclusionModel.fromJson(res.data['data']),
+      };
+    } else {
+      return {'status': false, 'data': []};
+    }
+  }
+
+  static Future getSubtitle({int? cid, String? bvid}) async {
+    var res = await Request().get(Api.getSubtitleConfig, data: {
+      'cid': cid,
+      'bvid': bvid,
+    });
+    try {
+      if (res.data['code'] == 0) {
+        return {
+          'status': true,
+          'data': SubTitlteModel.fromJson(res.data['data']),
+        };
+      } else {
+        return {'status': false, 'data': [], 'msg': res.data['msg']};
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
+
   // 视频排行
   static Future getRankVideoList(int rid) async {
     try {
@@ -260,5 +517,13 @@ class VideoHttp {
     } catch (err) {
       return {'status': false, 'data': [], 'msg': err};
     }
+  }
+
+  // 获取字幕内容
+  static Future<Map<String, dynamic>> getSubtitleContent(url) async {
+    var res = await Request().get('https:$url');
+    final String content = SubTitleUtils.convertToWebVTT(res.data['body']);
+    final List body = res.data['body'];
+    return {'content': content, 'body': body};
   }
 }
