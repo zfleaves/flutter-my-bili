@@ -1,17 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bilibili/http/video.dart';
-import 'package:bilibili/models/video/play/ao_output.dart';
-import 'package:bilibili/models/video/subTitile/content.dart';
-import 'package:bilibili/models/video/subTitile/result.dart';
-import 'package:bilibili/plugin/pl_player/index.dart';
-import 'package:bilibili/plugin/pl_player/models/play_repeat.dart';
-import 'package:bilibili/plugin/pl_player/utils/fullscreen.dart';
-import 'package:bilibili/services/service_locator.dart';
-import 'package:bilibili/utils/feed_back.dart';
-import 'package:bilibili/utils/storage.dart';
 import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
@@ -20,9 +12,19 @@ import 'package:hive/hive.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:ns_danmaku/ns_danmaku.dart';
-import 'package:screen_brightness/screen_brightness.dart';
+import 'package:bilibili/http/video.dart';
+import 'package:bilibili/models/video/play/ao_output.dart';
+import 'package:bilibili/plugin/pl_player/index.dart';
+import 'package:bilibili/plugin/pl_player/models/play_repeat.dart';
+import 'package:bilibili/services/service_locator.dart';
+import 'package:bilibili/utils/feed_back.dart';
+import 'package:bilibili/utils/storage.dart';
+// import 'package:screen_brightness/screen_brightness.dart';
 import 'package:status_bar_control/status_bar_control.dart';
 import 'package:universal_platform/universal_platform.dart';
+import '../../models/video/subTitile/content.dart';
+import '../../models/video/subTitile/result.dart';
+// import 'package:wakelock_plus/wakelock_plus.dart';
 
 Box videoStorage = GStrorage.video;
 Box setting = GStrorage.setting;
@@ -41,6 +43,7 @@ class PlPlayerController {
   /// [playerStatus] has a [status] observable
   final PlPlayerStatus playerStatus = PlPlayerStatus();
 
+  ///
   final PlPlayerDataStatus dataStatus = PlPlayerDataStatus();
 
   // bool controlsEnabled = false;
@@ -64,7 +67,7 @@ class PlPlayerController {
   final Rx<double> _playbackSpeed = 1.0.obs;
   final Rx<double> _longPressSpeed = 2.0.obs;
   final Rx<double> _currentVolume = 1.0.obs;
-  final Rx<double> _currentBrightness = 0.0.obs;
+  final Rx<double> _currentBrightness = 0.4545454.obs;
 
   final Rx<bool> _mute = false.obs;
   final Rx<bool> _showControls = false.obs;
@@ -76,7 +79,7 @@ class PlPlayerController {
   final Rx<bool> _subTitleOpen = false.obs;
   final Rx<int> _subTitleCode = (-1).obs;
   // 默认投稿视频格式
-  static final Rx<String> _videoType = 'archive'.obs;
+  static Rx<String> _videoType = 'archive'.obs;
 
   final Rx<String> _direction = 'horizontal'.obs;
 
@@ -218,6 +221,9 @@ class PlPlayerController {
 
   Rx<int> get playerCount => _playerCount;
 
+  ///
+  // Rx<String> get videoType => _videoType;
+
   /// 弹幕开关
   Rx<bool> isOpenDanmu = false.obs;
   // 关联弹幕控制器
@@ -229,7 +235,7 @@ class PlPlayerController {
   late double fontSizeVal;
   late double strokeWidth;
   late double danmakuDurationVal;
-  late List speedsList;
+  late List<double> speedsList;
   // 缓存
   double? defaultDuration;
   late bool enableAutoLongPressSpeed = false;
@@ -302,15 +308,15 @@ class PlPlayerController {
           .get(VideoBoxKey.longPressSpeedDefault, defaultValue: 2.0);
     }
     // 自定义倍速集合
-    speedsList = List.from(videoStorage
+    speedsList = List<double>.from(videoStorage
         .get(VideoBoxKey.customSpeedsList, defaultValue: <double>[]));
     // 默认倍速
-    speedsList = List.from(videoStorage
+    speedsList = List<double>.from(videoStorage
         .get(VideoBoxKey.customSpeedsList, defaultValue: <double>[]));
     //playSpeedSystem
-    final List playSpeedSystem =
+    final List<double> playSpeedSystem =
         videoStorage.get(VideoBoxKey.playSpeedSystem, defaultValue: playSpeed);
-    print(playSpeedSystem);
+
     // for (final PlaySpeed i in PlaySpeed.values) {
     speedsList.addAll(playSpeedSystem);
     // }
@@ -517,7 +523,6 @@ class PlPlayerController {
     }
     player.open(
       Media(
-        // 'https://user-images.githubusercontent.com/28951144/229373695-22f88f13-d18f-4288-9bf1-c3e078d83722.mp4',
         dataSource.videoSource!,
         httpHeaders: dataSource.httpHeaders,
         start: seekTo ?? Duration.zero,
@@ -849,7 +854,8 @@ class PlPlayerController {
   /// 亮度
   Future<void> getCurrentBrightness() async {
     try {
-      _currentBrightness.value = await ScreenBrightness().current;
+      // _currentBrightness.value = await ScreenBrightness().current;
+      _currentBrightness.value = 0.4545454;
     } catch (e) {
       throw 'Failed to get current brightness';
       //return 0;
@@ -859,7 +865,7 @@ class PlPlayerController {
   Future<void> setBrightness(double brightnes) async {
     try {
       brightness.value = brightnes;
-      ScreenBrightness().setScreenBrightness(brightnes);
+      // ScreenBrightness().setScreenBrightness(brightnes);
       // setVideoBrightness();
     } catch (e) {
       throw 'Failed to set brightness';
@@ -868,7 +874,7 @@ class PlPlayerController {
 
   Future<void> resetBrightness() async {
     try {
-      await ScreenBrightness().resetScreenBrightness();
+      // await ScreenBrightness().resetScreenBrightness();
     } catch (e) {
       throw 'Failed to reset brightness';
     }
@@ -1164,7 +1170,4 @@ class PlPlayerController {
       print(err);
     }
   }
-
-  
-
 }

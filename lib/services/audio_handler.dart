@@ -1,10 +1,10 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:hive/hive.dart';
 import 'package:bilibili/models/bangumi/info.dart';
 import 'package:bilibili/models/video_detail_res.dart';
+import 'package:get/get.dart';
 import 'package:bilibili/plugin/pl_player/index.dart';
 import 'package:bilibili/utils/storage.dart';
-import 'package:hive/hive.dart';
-import 'package:get/get.dart';
 
 Future<VideoPlayerServiceHandler> initAudioService() async {
   return await AudioService.init(

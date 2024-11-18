@@ -24,7 +24,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:ns_danmaku/models/danmaku_item.dart';
-import 'package:screen_brightness/screen_brightness.dart';
+// import 'package:screen_brightness/screen_brightness.dart';
 
 class VideoDetailController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -236,11 +236,11 @@ class VideoDetailController extends GetxController
     bool? autoplay,
   }) async {
     /// 设置/恢复 屏幕亮度
-    if (brightness != null) {
-      ScreenBrightness().setScreenBrightness(brightness!);
-    } else {
-      ScreenBrightness().resetScreenBrightness();
-    }
+    // if (brightness != null) {
+    //   ScreenBrightness().setScreenBrightness(brightness!);
+    // } else {
+    //   ScreenBrightness().resetScreenBrightness();
+    // }
     await plPlayerController.setDataSource(
       DataSource(
         videoSource: video ?? videoUrl,

@@ -1,21 +1,6 @@
 import 'dart:async';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:bilibili/models/common/gesture_mode.dart';
-import 'package:bilibili/plugin/pl_player/controller.dart';
-import 'package:bilibili/plugin/pl_player/models/bottom_control_type.dart';
-import 'package:bilibili/plugin/pl_player/models/bottom_progress_behavior.dart';
-import 'package:bilibili/plugin/pl_player/models/fullscreen_mode.dart';
-import 'package:bilibili/plugin/pl_player/utils.dart';
-import 'package:bilibili/plugin/pl_player/widgets/app_bar_ani.dart';
-import 'package:bilibili/plugin/pl_player/widgets/backward_seek.dart';
-import 'package:bilibili/plugin/pl_player/widgets/bottom_control.dart';
-import 'package:bilibili/plugin/pl_player/widgets/common_btn.dart';
-import 'package:bilibili/plugin/pl_player/widgets/forward_seek.dart';
-import 'package:bilibili/plugin/pl_player/widgets/play_pause_btn.dart';
-import 'package:bilibili/utils/feed_back.dart';
-import 'package:bilibili/utils/global_data.dart';
-import 'package:bilibili/utils/storage.dart';
 import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
@@ -25,10 +10,39 @@ import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
-import 'package:screen_brightness/screen_brightness.dart';
+import 'package:bilibili/models/common/gesture_mode.dart';
+import 'package:bilibili/plugin/pl_player/controller.dart';
+import 'package:bilibili/plugin/pl_player/models/duration.dart';
+import 'package:bilibili/plugin/pl_player/models/fullscreen_mode.dart';
+import 'package:bilibili/plugin/pl_player/utils.dart';
+import 'package:bilibili/utils/feed_back.dart';
+import 'package:bilibili/utils/storage.dart';
+// import 'package:screen_brightness/screen_brightness.dart';
+
+import '../../utils/global_data.dart';
+import 'models/bottom_control_type.dart';
+import 'models/bottom_progress_behavior.dart';
+import 'widgets/app_bar_ani.dart';
+import 'widgets/backward_seek.dart';
+import 'widgets/bottom_control.dart';
+import 'widgets/common_btn.dart';
+import 'widgets/forward_seek.dart';
+import 'widgets/play_pause_btn.dart';
 
 class PLVideoPlayer extends StatefulWidget {
+  const PLVideoPlayer({
+    required this.controller,
+    this.headerControl,
+    this.bottomControl,
+    this.danmuWidget,
+    this.bottomList,
+    this.customWidget,
+    this.customWidgets,
+    this.showEposideCb,
+    this.fullScreenCb,
+    super.key,
+  });
+
   final PlPlayerController controller;
   final PreferredSizeWidget? headerControl;
   final PreferredSizeWidget? bottomControl;
@@ -40,17 +54,6 @@ class PLVideoPlayer extends StatefulWidget {
   final List<Widget>? customWidgets;
   final Function? showEposideCb;
   final Function? fullScreenCb;
-  const PLVideoPlayer(
-      {super.key,
-      required this.controller,
-      this.headerControl,
-      this.bottomControl,
-      this.danmuWidget,
-      this.bottomList,
-      this.customWidget,
-      this.customWidgets,
-      this.showEposideCb,
-      this.fullScreenCb});
 
   @override
   State<PLVideoPlayer> createState() => _PLVideoPlayerState();
@@ -89,12 +92,10 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
   // 用于记录上一次全屏切换手势触发时间，避免误触
   DateTime? lastFullScreenToggleTime;
 
-  // 双击左边区域 👈
   void onDoubleTapSeekBackward() {
     _mountSeekBackwardButton.value = true;
   }
 
-  // 双击右边区域 👈
   void onDoubleTapSeekForward() {
     _mountSeekForwardButton.value = true;
   }
@@ -145,8 +146,6 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         setting.get(SettingBoxKey.enableQuickDouble, defaultValue: true);
     enableBackgroundPlay =
         setting.get(SettingBoxKey.enableBackgroundPlay, defaultValue: false);
-
-    // 声音控制
     Future.microtask(() async {
       try {
         FlutterVolumeController.updateShowSystemUI(true);
@@ -159,20 +158,18 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
       } catch (_) {}
     });
 
-    // 屏幕亮度控制
     Future.microtask(() async {
       try {
-        _brightnessValue.value = await ScreenBrightness().current;
-        ScreenBrightness().onCurrentBrightnessChanged.listen((double value) {
-          if (mounted) {
-            _brightnessValue.value = value;
-          }
-        });
+        // _brightnessValue.value = await ScreenBrightness().current;
+        // ScreenBrightness().onCurrentBrightnessChanged.listen((double value) {
+        //   if (mounted) {
+        //     _brightnessValue.value = value;
+        //   }
+        // });
       } catch (_) {}
     });
   }
 
-  // 设置声音
   Future<void> setVolume(double value) async {
     try {
       FlutterVolumeController.updateShowSystemUI(false);
@@ -190,19 +187,18 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
     });
   }
 
-  // 设置屏幕亮度
   Future<void> setBrightness(double value) async {
-    try {
-      await ScreenBrightness().setScreenBrightness(value);
-    } catch (_) {}
-    _brightnessIndicator.value = true;
-    _brightnessTimer?.cancel();
-    _brightnessTimer = Timer(const Duration(milliseconds: 200), () {
-      if (mounted) {
-        _brightnessIndicator.value = false;
-      }
-    });
-    widget.controller.brightness.value = value;
+    // try {
+    //   await ScreenBrightness().setScreenBrightness(value);
+    // } catch (_) {}
+    // _brightnessIndicator.value = true;
+    // _brightnessTimer?.cancel();
+    // _brightnessTimer = Timer(const Duration(milliseconds: 200), () {
+    //   if (mounted) {
+    //     _brightnessIndicator.value = false;
+    //   }
+    // });
+    // widget.controller.brightness.value = value;
   }
 
   @override
@@ -347,7 +343,6 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         },
       ),
     };
-
     final List<Widget> list = [];
     List<BottomControlType> userSpecifyItem = widget.bottomList ??
         [
@@ -390,32 +385,34 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
       fontSize: 12,
     );
     return Stack(
-      // 每个子组件都会保持其原有的大小，并按照其在 Stack 中的顺序和各自的定位属性（如 alignment 或 position）来显示。
       fit: StackFit.passthrough,
-      children: [
-        Obx(() => Video(
-              key: ValueKey(_.videoFit.value),
-              controller: videoController,
-              controls: NoVideoControls,
-              pauseUponEnteringBackgroundMode: !enableBackgroundPlay,
-              resumeUponEnteringForegroundMode: true,
-              subtitleViewConfiguration: const SubtitleViewConfiguration(
-                style: subTitleStyle,
-                padding: EdgeInsets.all(24.0),
-              ),
-              fit: _.videoFit.value,
-            )),
+      children: <Widget>[
+        Obx(
+          () => Video(
+            key: ValueKey(_.videoFit.value),
+            controller: videoController,
+            controls: NoVideoControls,
+            pauseUponEnteringBackgroundMode: !enableBackgroundPlay,
+            resumeUponEnteringForegroundMode: true,
+            subtitleViewConfiguration: const SubtitleViewConfiguration(
+              style: subTitleStyle,
+              padding: EdgeInsets.all(24.0),
+            ),
+            fit: _.videoFit.value,
+          ),
+        ),
 
         /// 长按倍速 toast
-        Obx(() => Align(
-              alignment: Alignment.topCenter,
-              child: FractionalTranslation(
-                translation: const Offset(0.0, 0.3), // 上下偏移量（负数向上偏移）
-                child: AnimatedOpacity(
-                  curve: Curves.easeInOut,
-                  opacity: _.doubleSpeedStatus.value ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 150),
-                  child: Container(
+        Obx(
+          () => Align(
+            alignment: Alignment.topCenter,
+            child: FractionalTranslation(
+              translation: const Offset(0.0, 0.3), // 上下偏移量（负数向上偏移）
+              child: AnimatedOpacity(
+                curve: Curves.easeInOut,
+                opacity: _.doubleSpeedStatus.value ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 150),
+                child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: const Color(0x88000000),
@@ -428,14 +425,15 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
                         '倍速中',
                         style: TextStyle(color: Colors.white, fontSize: 13),
                       ),
-                    ),
-                  ),
-                ),
+                    )),
               ),
-            )),
+            ),
+          ),
+        ),
 
         /// 时间进度 toast
-        Obx(() => Align(
+        Obx(
+          () => Align(
             alignment: Alignment.topCenter,
             child: FractionalTranslation(
               translation: const Offset(0.0, 1.0), // 上下偏移量（负数向上偏移）
@@ -443,7 +441,6 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
                 curve: Curves.easeInOut,
                 opacity: _.isSliderMoving.value ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 150),
-                // 固有宽,根据子元素得固有宽度调整其子元素大小得组件
                 child: IntrinsicWidth(
                   child: Container(
                     alignment: Alignment.center,
@@ -481,104 +478,112 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
                   ),
                 ),
               ),
-            ))),
+            ),
+          ),
+        ),
 
         /// 音量🔊 控制条展示
-        Obx(() => Align(
-              child: AnimatedOpacity(
-                curve: Curves.easeInOut,
-                opacity: _volumeIndicator.value ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 150),
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0x88000000),
-                    borderRadius: BorderRadius.circular(64.0),
-                  ),
-                  height: 34.0,
-                  width: 70.0,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 34.0,
-                        width: 28.0,
-                        alignment: Alignment.centerRight,
-                        child: Icon(
-                          _volumeValue.value == 0.0
-                              ? Icons.volume_off
-                              : _volumeValue.value < 0.5
-                                  ? Icons.volume_down
-                                  : Icons.volume_up,
-                          color: const Color(0xFFFFFFFF),
-                          size: 20.0,
+        Obx(
+          () => Align(
+            child: AnimatedOpacity(
+              curve: Curves.easeInOut,
+              opacity: _volumeIndicator.value ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 150),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0x88000000),
+                  borderRadius: BorderRadius.circular(64.0),
+                ),
+                height: 34.0,
+                width: 70.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      height: 34.0,
+                      width: 28.0,
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        _volumeValue.value == 0.0
+                            ? Icons.volume_off
+                            : _volumeValue.value < 0.5
+                                ? Icons.volume_down
+                                : Icons.volume_up,
+                        color: const Color(0xFFFFFFFF),
+                        size: 20.0,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        '${(_volumeValue.value * 100.0).round()}%',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13.0,
+                          color: Color(0xFFFFFFFF),
                         ),
                       ),
-                      Expanded(
-                        child: Text(
-                          '${(_volumeValue.value * 100.0).round()}%',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 13.0,
-                            color: Color(0xFFFFFFFF),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6.0),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 6.0),
+                  ],
                 ),
               ),
-            )),
+            ),
+          ),
+        ),
 
         /// 亮度🌞 控制条展示
-        Obx(() => Align(
-              child: AnimatedOpacity(
-                curve: Curves.easeInOut,
-                opacity: _brightnessIndicator.value ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 150),
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0x88000000),
-                    borderRadius: BorderRadius.circular(64.0),
-                  ),
-                  height: 34.0,
-                  width: 70.0,
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 30.0,
-                        width: 28.0,
-                        alignment: Alignment.centerRight,
-                        child: Icon(
-                          _brightnessValue.value < 1.0 / 3.0
-                              ? Icons.brightness_low
-                              : _brightnessValue.value < 2.0 / 3.0
-                                  ? Icons.brightness_medium
-                                  : Icons.brightness_high,
-                          color: const Color(0xFFFFFFFF),
-                          size: 18.0,
+        Obx(
+          () => Align(
+            child: AnimatedOpacity(
+              curve: Curves.easeInOut,
+              opacity: _brightnessIndicator.value ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 150),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0x88000000),
+                  borderRadius: BorderRadius.circular(64.0),
+                ),
+                height: 34.0,
+                width: 70.0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      height: 30.0,
+                      width: 28.0,
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        _brightnessValue.value < 1.0 / 3.0
+                            ? Icons.brightness_low
+                            : _brightnessValue.value < 2.0 / 3.0
+                                ? Icons.brightness_medium
+                                : Icons.brightness_high,
+                        color: const Color(0xFFFFFFFF),
+                        size: 18.0,
+                      ),
+                    ),
+                    const SizedBox(width: 2.0),
+                    Expanded(
+                      child: Text(
+                        '${(_brightnessValue.value * 100.0).round()}%',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13.0,
+                          color: Color(0xFFFFFFFF),
                         ),
                       ),
-                      const SizedBox(width: 2.0),
-                      Expanded(
-                        child: Text(
-                          '${(_brightnessValue.value * 100.0).round()}%',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 13.0,
-                            color: Color(0xFFFFFFFF),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6.0),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 6.0),
+                  ],
                 ),
               ),
-            )),
+            ),
+          ),
+        ),
 
         // Obx(() {
         //   if (_.buffered.value == Duration.zero) {
@@ -599,9 +604,8 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         // }),
 
         /// 弹幕面板
-        if (widget.danmuWidget != null) ...[
-          Positioned.fill(top: 4, child: widget.danmuWidget!),
-        ],
+        // if (widget.danmuWidget != null)
+        //   Positioned.fill(top: 4, child: widget.danmuWidget!),
 
         /// 开启且有字幕时展示
         Stack(
@@ -612,7 +616,8 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               bottom: 30,
               child: Align(
                 alignment: Alignment.center,
-                child: Obx(() => Visibility(
+                child: Obx(
+                  () => Visibility(
                       visible: widget.controller.subTitleCode.value != -1,
                       child: Container(
                         decoration: BoxDecoration(
@@ -634,10 +639,10 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
                             fontSize: 12,
                           ),
                         ),
-                      ),
-                    )),
+                      )),
+                ),
               ),
-            )
+            ),
           ],
         ),
 
@@ -669,7 +674,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               }
               doubleTapFuc(type);
             },
-            onLongPressStart: (LongPressStartDetails details) {
+            onLongPressStart: (LongPressStartDetails detail) {
               feedBack();
               _.setDoubleSpeedStatus(true);
             },
@@ -695,7 +700,7 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
               _.onUpdatedSliderProgress(result);
               _.onChangedSliderStart();
             },
-            onHorizontalDragEnd: (details) {
+            onHorizontalDragEnd: (DragEndDetails details) {
               if (_.videoType == 'live' || _.controlsLock.value) {
                 return;
               }
@@ -704,14 +709,15 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
             },
             // 垂直方向 音量/亮度调节
             onVerticalDragUpdate: (DragUpdateDetails details) async {
-              /// 锁定时禁用
-              if (_.controlsLock.value) {
-                return;
-              }
               final double totalWidth = MediaQuery.sizeOf(context).width;
               final double tapPosition = details.localPosition.dx;
               final double sectionWidth = totalWidth / 3;
               final double delta = details.delta.dy;
+
+              /// 锁定时禁用
+              if (_.controlsLock.value) {
+                return;
+              }
               if (lastFullScreenToggleTime != null &&
                   DateTime.now().difference(lastFullScreenToggleTime!) <
                       const Duration(milliseconds: 500)) {
@@ -772,121 +778,136 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         ),
 
         // 头部、底部控制条
-        Obx(() => Column(
-              children: [
-                if (widget.headerControl != null ||
-                    _.headerControl != null) ...[
-                  ClipRect(
-                    child: AppBarAni(
-                      controller: animationController,
-                      visible: !_.controlsLock.value && _.showControls.value,
-                      position: 'top',
-                      child: widget.headerControl ?? _.headerControl!,
-                    ),
-                  ),
-                ],
-                const Spacer(),
+        Obx(
+          () => Column(
+            children: [
+              if (widget.headerControl != null || _.headerControl != null)
                 ClipRect(
                   child: AppBarAni(
                     controller: animationController,
                     visible: !_.controlsLock.value && _.showControls.value,
-                    position: 'bottom',
-                    child: widget.bottomControl ??
-                        BottomControl(
-                          controller: widget.controller,
-                          triggerFullScreen: _.triggerFullScreen,
-                          buildBottomControl: buildBottomControl(),
-                        ),
+                    position: 'top',
+                    child: widget.headerControl ?? _.headerControl!,
                   ),
-                )
-              ],
-            )),
+                ),
+              const Spacer(),
+              ClipRect(
+                child: AppBarAni(
+                  controller: animationController,
+                  visible: !_.controlsLock.value && _.showControls.value,
+                  position: 'bottom',
+                  child: widget.bottomControl ??
+                      BottomControl(
+                        controller: widget.controller,
+                        triggerFullScreen: _.triggerFullScreen,
+                        buildBottomControl: buildBottomControl(),
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
 
         /// 进度条 live模式下禁用
-        Obx(() {
-          final int value = _.sliderPositionSeconds.value;
-          final int max = _.durationSeconds.value;
-          final int buffer = _.bufferedSeconds.value;
-          if (_.showControls.value) {
-            return Container();
-          }
-          if (defaultBtmProgressBehavior ==
-              BtmProgresBehavior.alwaysHide.code) {
-            return const SizedBox();
-          }
-          if (defaultBtmProgressBehavior ==
-                  BtmProgresBehavior.onlyShowFullScreen.code &&
-              !_.isFullScreen.value) {
-            return const SizedBox();
-          } else if (defaultBtmProgressBehavior ==
-                  BtmProgresBehavior.onlyHideFullScreen.code &&
-              _.isFullScreen.value) {
-            return const SizedBox();
-          }
-          if (_.videoType == 'live') {
-            return const SizedBox();
-          }
-          if (value > max || max <= 0) {
-            return const SizedBox();
-          }
-          return Positioned(
-            bottom: -1.5,
-            left: 0,
-            right: 0,
-            child: ProgressBar(
-              progress: Duration(seconds: value),
-              buffered: Duration(seconds: buffer),
-              total: Duration(seconds: max),
-              progressBarColor: colorTheme,
-              baseBarColor: Colors.white.withOpacity(0.2),
-              bufferedBarColor:
-                  Theme.of(context).colorScheme.primary.withOpacity(0.4),
-              timeLabelLocation: TimeLabelLocation.none,
-              thumbColor: colorTheme,
-              barHeight: 3,
-              thumbRadius: 0.0,
-              // onDragStart: (duration) {
-              //   _.onChangedSliderStart();
-              // },
-              // onDragEnd: () {
-              //   _.onChangedSliderEnd();
-              // },
-              // onDragUpdate: (details) {
-              //   print(details);
-              // },
-              // onSeek: (duration) {
-              //   feedBack();
-              //   _.onChangedSlider(duration.inSeconds.toDouble());
-              //   _.seekTo(duration);
-              // },
-            ),
-          );
-        }),
 
-        // 锁🔒
-        Obx(() => Visibility(
-              visible: _.videoType != 'live' && _.isFullScreen.value,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: FractionalTranslation(
-                  translation: const Offset(1, 0.0),
-                  child: Visibility(
-                    visible: _.showControls.value,
-                    child: ComBtn(
-                      icon: Icon(
-                        _.controlsLock.value
-                            ? FontAwesomeIcons.lock
-                            : FontAwesomeIcons.lockOpen,
-                        size: 15,
-                        color: Colors.white,
-                      ),
-                      fuc: () => _.onLockControl(!_.controlsLock.value),
+        Obx(
+          () {
+            final int value = _.sliderPositionSeconds.value;
+            final int max = _.durationSeconds.value;
+            final int buffer = _.bufferedSeconds.value;
+            if (_.showControls.value) {
+              return Container();
+            }
+            if (defaultBtmProgressBehavior ==
+                BtmProgresBehavior.alwaysHide.code) {
+              return const SizedBox();
+            }
+            if (defaultBtmProgressBehavior ==
+                    BtmProgresBehavior.onlyShowFullScreen.code &&
+                !_.isFullScreen.value) {
+              return const SizedBox();
+            } else if (defaultBtmProgressBehavior ==
+                    BtmProgresBehavior.onlyHideFullScreen.code &&
+                _.isFullScreen.value) {
+              return const SizedBox();
+            }
+
+            if (_.videoType == 'live') {
+              return const SizedBox();
+            }
+            if (value > max || max <= 0) {
+              return const SizedBox();
+            }
+            return Positioned(
+              bottom: -1.5,
+              left: 0,
+              right: 0,
+              child: ProgressBar(
+                progress: Duration(seconds: value),
+                buffered: Duration(seconds: buffer),
+                total: Duration(seconds: max),
+                progressBarColor: colorTheme,
+                baseBarColor: Colors.white.withOpacity(0.2),
+                bufferedBarColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                timeLabelLocation: TimeLabelLocation.none,
+                thumbColor: colorTheme,
+                barHeight: 3,
+                thumbRadius: 0.0,
+                // onDragStart: (duration) {
+                //   _.onChangedSliderStart();
+                // },
+                // onDragEnd: () {
+                //   _.onChangedSliderEnd();
+                // },
+                // onDragUpdate: (details) {
+                //   print(details);
+                // },
+                // onSeek: (duration) {
+                //   feedBack();
+                //   _.onChangedSlider(duration.inSeconds.toDouble());
+                //   _.seekTo(duration);
+                // },
+              ),
+              // SlideTransition(
+              //     position: Tween<Offset>(
+              //       begin: Offset.zero,
+              //       end: const Offset(0, -1),
+              //     ).animate(CurvedAnimation(
+              //       parent: animationController,
+              //       curve: Curves.easeInOut,
+              //     )),
+              //     child: ),
+            );
+          },
+        ),
+
+        // 锁
+        Obx(
+          () => Visibility(
+            visible: _.videoType != 'live' && _.isFullScreen.value,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FractionalTranslation(
+                translation: const Offset(1, 0.0),
+                child: Visibility(
+                  visible: _.showControls.value,
+                  child: ComBtn(
+                    icon: Icon(
+                      _.controlsLock.value
+                          ? FontAwesomeIcons.lock
+                          : FontAwesomeIcons.lockOpen,
+                      size: 15,
+                      color: Colors.white,
                     ),
+                    fuc: () => _.onLockControl(!_.controlsLock.value),
                   ),
                 ),
               ),
-            )),
-
+            ),
+          ),
+        ),
+        //
         Obx(() {
           if (_.dataStatus.loading || _.isBuffering.value) {
             return Center(
@@ -904,103 +925,105 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
                 ),
               ),
             );
+          } else {
+            return const SizedBox();
           }
-          return const SizedBox();
         }),
 
         /// 点击 快进/快退
-        Obx(() => Visibility(
-              visible: _mountSeekBackwardButton.value ||
-                  _mountSeekForwardButton.value,
-              child: Positioned.fill(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _mountSeekBackwardButton.value
-                          ? TweenAnimationBuilder<double>(
-                              tween: Tween<double>(
-                                begin: 0.0,
-                                end: _hideSeekBackwardButton.value ? 0.0 : 1.0,
-                              ),
-                              duration: const Duration(milliseconds: 150),
-                              builder: (BuildContext context, double value,
-                                      Widget? child) =>
-                                  Opacity(
-                                opacity: value,
-                                child: child,
-                              ),
-                              onEnd: () {
-                                if (_hideSeekBackwardButton.value) {
-                                  _hideSeekBackwardButton.value = false;
-                                  _mountSeekBackwardButton.value = false;
-                                }
+        Obx(
+          () => Visibility(
+            visible:
+                _mountSeekBackwardButton.value || _mountSeekForwardButton.value,
+            child: Positioned.fill(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _mountSeekBackwardButton.value
+                        ? TweenAnimationBuilder<double>(
+                            tween: Tween<double>(
+                              begin: 0.0,
+                              end: _hideSeekBackwardButton.value ? 0.0 : 1.0,
+                            ),
+                            duration: const Duration(milliseconds: 150),
+                            builder: (BuildContext context, double value,
+                                    Widget? child) =>
+                                Opacity(
+                              opacity: value,
+                              child: child,
+                            ),
+                            onEnd: () {
+                              if (_hideSeekBackwardButton.value) {
+                                _hideSeekBackwardButton.value = false;
+                                _mountSeekBackwardButton.value = false;
+                              }
+                            },
+                            child: BackwardSeekIndicator(
+                              onChanged: (Duration value) => {},
+                              onSubmitted: (Duration value) {
+                                _hideSeekBackwardButton.value = true;
+                                final Player player =
+                                    widget.controller.videoPlayerController!;
+                                Duration result = player.state.position - value;
+                                result = result.clamp(
+                                  Duration.zero,
+                                  player.state.duration,
+                                );
+                                player.seek(result);
+                                widget.controller.play();
                               },
-                              child: BackwardSeekIndicator(
-                                onChanged: (Duration value) => {},
-                                onSubmitted: (Duration value) {
-                                  _hideSeekBackwardButton.value = true;
-                                  final Player player =
-                                      widget.controller.videoPlayerController!;
-                                  Duration result =
-                                      player.state.position - value;
-                                  result = result.clamp(
-                                    Duration.zero,
-                                    player.state.duration,
-                                  );
-                                  player.seek(result);
-                                  widget.controller.play();
-                                },
-                              ),
-                            )
-                          : const SizedBox(),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      width: MediaQuery.sizeOf(context).width / 4,
                     ),
-                    Expanded(
-                      child: SizedBox(
-                        width: MediaQuery.sizeOf(context).width / 4,
-                      ),
-                    ),
-                    Expanded(
-                      child: _mountSeekForwardButton.value
-                          ? TweenAnimationBuilder<double>(
-                              tween: Tween<double>(
-                                begin: 0.0,
-                                end: _hideSeekForwardButton.value ? 0.0 : 1.0,
-                              ),
-                              duration: const Duration(milliseconds: 150),
-                              builder: (BuildContext context, double value,
-                                      Widget? child) =>
-                                  Opacity(
-                                opacity: value,
-                                child: child,
-                              ),
-                              onEnd: () {
-                                if (_hideSeekForwardButton.value) {
-                                  _hideSeekForwardButton.value = false;
-                                  _mountSeekForwardButton.value = false;
-                                }
+                  ),
+                  Expanded(
+                    child: _mountSeekForwardButton.value
+                        ? TweenAnimationBuilder<double>(
+                            tween: Tween<double>(
+                              begin: 0.0,
+                              end: _hideSeekForwardButton.value ? 0.0 : 1.0,
+                            ),
+                            duration: const Duration(milliseconds: 150),
+                            builder: (BuildContext context, double value,
+                                    Widget? child) =>
+                                Opacity(
+                              opacity: value,
+                              child: child,
+                            ),
+                            onEnd: () {
+                              if (_hideSeekForwardButton.value) {
+                                _hideSeekForwardButton.value = false;
+                                _mountSeekForwardButton.value = false;
+                              }
+                            },
+                            child: ForwardSeekIndicator(
+                              onChanged: (Duration value) => {},
+                              onSubmitted: (Duration value) {
+                                _hideSeekForwardButton.value = true;
+                                final Player player =
+                                    widget.controller.videoPlayerController!;
+                                Duration result = player.state.position + value;
+                                result = result.clamp(
+                                  Duration.zero,
+                                  player.state.duration,
+                                );
+                                player.seek(result);
+                                widget.controller.play();
                               },
-                              child: ForwardSeekIndicator(
-                                onChanged: (Duration value) => {},
-                                onSubmitted: (Duration value) {
-                                  _hideSeekForwardButton.value = true;
-                                  final Player player =
-                                      widget.controller.videoPlayerController!;
-                                  Duration result = player.state.position + value;
-                                  result = result.clamp(
-                                    Duration.zero,
-                                    player.state.duration,
-                                  );
-                                  player.seek(result);
-                                  widget.controller.play();
-                                },
-                              ),
-                            )
-                          : const SizedBox(),
-                    )
-                  ],
-                ),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
+                ],
               ),
-            ))
+            ),
+          ),
+        ),
       ],
     );
   }

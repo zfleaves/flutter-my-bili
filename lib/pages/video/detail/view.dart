@@ -1,40 +1,36 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
-import 'package:bilibili/common/widgets/network_img_layer.dart';
-import 'package:bilibili/http/user.dart';
-import 'package:bilibili/models/common/search_type.dart';
-import 'package:bilibili/pages/bangumi/introduction/controller.dart';
-import 'package:bilibili/pages/bangumi/introduction/view.dart';
-import 'package:bilibili/pages/danmaku/view.dart';
-import 'package:bilibili/pages/video/detail/controller.dart';
-import 'package:bilibili/pages/video/detail/introduction/controller.dart';
-import 'package:bilibili/pages/video/detail/introduction/view.dart';
-import 'package:bilibili/pages/video/detail/related/view.dart';
-import 'package:bilibili/pages/video/detail/reply/view.dart';
-import 'package:bilibili/pages/video/detail/widgets/app_bar.dart';
-import 'package:bilibili/plugin/pl_player/controller.dart';
-import 'package:bilibili/plugin/pl_player/models/bottom_control_type.dart';
-import 'package:bilibili/plugin/pl_player/models/play_repeat.dart';
-import 'package:bilibili/plugin/pl_player/models/play_status.dart';
-import 'package:bilibili/plugin/pl_player/utils/fullscreen.dart';
-import 'package:bilibili/plugin/pl_player/view.dart';
-import 'package:bilibili/plugin/pl_player/widgets/common_btn.dart';
-import 'package:bilibili/services/service_locator.dart';
-import 'package:bilibili/services/shutdown_timer_service.dart';
-import 'package:bilibili/utils/storage.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:floating/floating.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:bilibili/common/widgets/network_img_layer.dart';
+import 'package:bilibili/http/user.dart';
+import 'package:bilibili/models/common/search_type.dart';
+import 'package:bilibili/pages/bangumi/introduction/index.dart';
+import 'package:bilibili/pages/danmaku/view.dart';
+import 'package:bilibili/pages/video/detail/reply/index.dart';
+import 'package:bilibili/pages/video/detail/controller.dart';
+import 'package:bilibili/pages/video/detail/introduction/index.dart';
+import 'package:bilibili/pages/video/detail/related/index.dart';
+import 'package:bilibili/plugin/pl_player/index.dart';
+import 'package:bilibili/plugin/pl_player/models/play_repeat.dart';
+import 'package:bilibili/services/service_locator.dart';
+import 'package:bilibili/utils/storage.dart';
 import 'package:status_bar_control/status_bar_control.dart';
 
+import '../../../plugin/pl_player/models/bottom_control_type.dart';
+import '../../../services/shutdown_timer_service.dart';
+import 'widgets/app_bar.dart';
+
 class VideoDetailPage extends StatefulWidget {
-  const VideoDetailPage({super.key});
+  const VideoDetailPage({Key? key}) : super(key: key);
 
   @override
   State<VideoDetailPage> createState() => _VideoDetailPageState();
@@ -157,7 +153,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         plPlayerController!.seekTo(Duration.zero);
         plPlayerController!.play();
       }
-
       // 播放完展示控制栏
       try {
         PiPStatus currentStatus = await vdCtr.floating!.pipStatus;
@@ -189,7 +184,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     autoEnterPip(status: PlayerStatus.playing);
   }
 
-  // 全屏状态监听
   void fullScreenStatusListener() {
     plPlayerController?.isFullScreen.listen((bool isFullScreen) {
       if (isFullScreen) {
@@ -217,7 +211,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     });
   }
 
-  // 获取状态栏高度
   getStatusHeight() async {
     statusHeight = await StatusBarControl.getHeight;
   }
@@ -288,7 +281,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     super.didPopNext();
   }
 
-  // 当 MyWidget 的主题（Theme）发生变化时，didChangeDependencies() 方法会被调用
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -470,7 +462,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -492,7 +484,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     // 横屏
     final bool isLandscape = _context.orientation == Orientation.landscape;
     final Rx<bool> isFullScreen = plPlayerController?.isFullScreen ?? false.obs;
-
     // 全屏时高度撑满
     if (isLandscape || isFullScreen.value == true) {
       videoHeight.value = Get.size.height;
@@ -505,28 +496,40 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     /// 播放器面板
     Widget videoPlayerPanel = FutureBuilder(
       future: _futureBuilderFuture,
-      builder: (context, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData && snapshot.data['status']) {
-          return Obx(() {
-            return !vdCtr.autoPlay.value
-                ? const SizedBox()
-                : Obx(() => PLVideoPlayer(
-                      controller: plPlayerController!,
-                      headerControl: vdCtr.headerControl,
-                      danmuWidget: PlDanmaku(
-                        key: Key(vdCtr.danmakuCid.value.toString()),
-                        cid: vdCtr.danmakuCid.value,
-                        playerController: plPlayerController!,
+          return Obx(
+            () {
+              return !vdCtr.autoPlay.value
+                  ? const SizedBox()
+                  : Obx(
+                      () => PLVideoPlayer(
+                        controller: plPlayerController!,
+                        headerControl: vdCtr.headerControl,
+                        danmuWidget: PlDanmaku(
+                          key: Key(vdCtr.danmakuCid.value.toString()),
+                          cid: vdCtr.danmakuCid.value,
+                          playerController: plPlayerController!,
+                        ),
+                        bottomList: vdCtr.bottomList,
+                        showEposideCb: () => vdCtr.videoType == SearchType.video
+                            ? videoIntroController.showEposideHandler()
+                            : bangumiIntroController.showEposideHandler(),
+                        fullScreenCb: (bool status) {
+                          if (status) {
+                            videoHeight.value = Get.size.height;
+                          } else {
+                            videoHeight.value = defaultVideoHeight;
+                          }
+                        },
                       ),
-                      bottomList: vdCtr.bottomList,
-                      showEposideCb: () => vdCtr.videoType == SearchType.video
-                          ? videoIntroController.showEposideHandler()
-                          : bangumiIntroController.showEposideHandler(),
-                    ));
-          });
+                    );
+            },
+          );
+        } else {
+          // 加载失败异常处理
+          return const SizedBox();
         }
-        // 加载失败异常处理
-        return const SizedBox();
       },
     );
 
@@ -551,26 +554,29 @@ class _VideoDetailPageState extends State<VideoDetailPage>
             ),
             body: ExtendedNestedScrollView(
               controller: _extendNestCtr,
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
+              headerSliverBuilder:
+                  (BuildContext context2, bool innerBoxIsScrolled) {
                 return <Widget>[
-                  Obx(() {
-                    final Orientation orientation =
-                        MediaQuery.of(context).orientation;
-                    final bool isFullScreen =
-                        plPlayerController?.isFullScreen.value == true;
-                    final double expandedHeight =
-                        orientation == Orientation.landscape || isFullScreen
-                            ? (MediaQuery.sizeOf(context).height -
-                                (orientation == Orientation.landscape
-                                    ? 0
-                                    : MediaQuery.of(context).padding.top))
-                            : videoHeight.value;
-                    if (orientation == Orientation.landscape || isFullScreen) {
-                      enterFullScreen();
-                    } else {
-                      exitFullScreen();
-                    }
-                    return SliverAppBar(
+                  Obx(
+                    () {
+                      final Orientation orientation =
+                          MediaQuery.of(context).orientation;
+                      final bool isFullScreen =
+                          plPlayerController?.isFullScreen.value == true;
+                      final double expandedHeight =
+                          orientation == Orientation.landscape || isFullScreen
+                              ? (MediaQuery.sizeOf(context).height -
+                                  (orientation == Orientation.landscape
+                                      ? 0
+                                      : MediaQuery.of(context).padding.top))
+                              : videoHeight.value;
+                      if (orientation == Orientation.landscape ||
+                          isFullScreen) {
+                        enterFullScreen();
+                      } else {
+                        exitFullScreen();
+                      }
+                      return SliverAppBar(
                         automaticallyImplyLeading: false,
                         pinned: true,
                         elevation: 0,
@@ -582,7 +588,6 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                           background: PopScope(
                             canPop:
                                 plPlayerController?.isFullScreen.value != true,
-                            // ignore: deprecated_member_use
                             onPopInvoked: (bool didPop) {
                               if (plPlayerController?.isFullScreen.value ==
                                   true) {
@@ -595,11 +600,12 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                               }
                             },
                             child: LayoutBuilder(
-                              builder: (context, constraints) {
+                              builder: (BuildContext context,
+                                  BoxConstraints constraints) {
                                 return Hero(
                                   tag: heroTag,
                                   child: Stack(
-                                    children: [
+                                    children: <Widget>[
                                       if (isShowing) videoPlayerPanel,
 
                                       /// 关闭自动播放时 手动播放
@@ -621,8 +627,10 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                               },
                             ),
                           ),
-                        ));
-                  })
+                        ),
+                      );
+                    },
+                  ),
                 ];
               },
 
@@ -643,18 +651,18 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                   Expanded(
                     child: TabBarView(
                       controller: vdCtr.tabCtr,
-                      children: [
+                      children: <Widget>[
                         Builder(
-                          builder: (context) {
+                          builder: (BuildContext context) {
                             return CustomScrollView(
                               key: const PageStorageKey<String>('简介'),
-                              slivers: [
+                              slivers: <Widget>[
                                 if (vdCtr.videoType == SearchType.video) ...[
                                   VideoIntroPanel(bvid: vdCtr.bvid),
                                 ] else if (vdCtr.videoType ==
                                     SearchType.media_bangumi) ...[
                                   Obx(() =>
-                                    BangumiIntroPanel(cid: vdCtr.cid.value)),    
+                                      BangumiIntroPanel(cid: vdCtr.cid.value)),
                                 ],
                                 SliverToBoxAdapter(
                                   child: Divider(
@@ -665,9 +673,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                                         .withOpacity(0.06),
                                   ),
                                 ),
-                                if (vdCtr.videoType == SearchType.video && vdCtr.enableRelatedVideo) ...[
+                                if (vdCtr.videoType == SearchType.video &&
+                                    vdCtr.enableRelatedVideo)
                                   const RelatedVideoPanel(),
-                                ]
                               ],
                             );
                           },
@@ -681,7 +689,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                         )
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -711,8 +719,9 @@ class _VideoDetailPageState extends State<VideoDetailPage>
         childWhenEnabled: videoPlayerPanel,
         floating: floating,
       );
+    } else {
+      return childWhenDisabled;
     }
-    return childWhenDisabled;
   }
 
   Widget buildCustomAppBar() {
