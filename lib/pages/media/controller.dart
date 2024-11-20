@@ -5,6 +5,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import '../../models/user/fav_folder.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class MediaController extends GetxController {
   Rx<FavFolderData> favFolderData = FavFolderData().obs;
@@ -14,8 +15,13 @@ class MediaController extends GetxController {
     {
       'icon': Icons.file_download_outlined,
       'title': '离线缓存',
-      'onTap': () {
-        SmartDialog.showToast('功能开发中');
+      // 'onTap': () {
+      //   SmartDialog.showToast('功能开发中');
+      // },
+      'onTap': () async {
+        double _currentBrightness = await ScreenBrightness.instance.system;
+        print(_currentBrightness);
+        ScreenBrightness.instance.setSystemScreenBrightness(0);
       },
     },
     {

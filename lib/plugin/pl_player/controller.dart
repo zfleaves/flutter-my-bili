@@ -19,7 +19,7 @@ import 'package:bilibili/plugin/pl_player/models/play_repeat.dart';
 import 'package:bilibili/services/service_locator.dart';
 import 'package:bilibili/utils/feed_back.dart';
 import 'package:bilibili/utils/storage.dart';
-// import 'package:screen_brightness/screen_brightness.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:status_bar_control/status_bar_control.dart';
 import 'package:universal_platform/universal_platform.dart';
 import '../../models/video/subTitile/content.dart';
@@ -854,8 +854,8 @@ class PlPlayerController {
   /// 亮度
   Future<void> getCurrentBrightness() async {
     try {
-      // _currentBrightness.value = await ScreenBrightness().current;
-      _currentBrightness.value = 0.4545454;
+      _currentBrightness.value = await ScreenBrightness.instance.system;
+      // _currentBrightness.value = 0.4545454;
     } catch (e) {
       throw 'Failed to get current brightness';
       //return 0;
@@ -865,6 +865,7 @@ class PlPlayerController {
   Future<void> setBrightness(double brightnes) async {
     try {
       brightness.value = brightnes;
+      ScreenBrightness.instance.setSystemScreenBrightness(brightnes);
       // ScreenBrightness().setScreenBrightness(brightnes);
       // setVideoBrightness();
     } catch (e) {
@@ -875,6 +876,7 @@ class PlPlayerController {
   Future<void> resetBrightness() async {
     try {
       // await ScreenBrightness().resetScreenBrightness();
+      ScreenBrightness.instance.resetApplicationScreenBrightness();
     } catch (e) {
       throw 'Failed to reset brightness';
     }

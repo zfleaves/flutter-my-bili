@@ -17,7 +17,7 @@ import 'package:bilibili/plugin/pl_player/models/fullscreen_mode.dart';
 import 'package:bilibili/plugin/pl_player/utils.dart';
 import 'package:bilibili/utils/feed_back.dart';
 import 'package:bilibili/utils/storage.dart';
-// import 'package:screen_brightness/screen_brightness.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 import '../../utils/global_data.dart';
 import 'models/bottom_control_type.dart';
@@ -160,12 +160,12 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
 
     Future.microtask(() async {
       try {
-        // _brightnessValue.value = await ScreenBrightness().current;
-        // ScreenBrightness().onCurrentBrightnessChanged.listen((double value) {
-        //   if (mounted) {
-        //     _brightnessValue.value = value;
-        //   }
-        // });
+        _brightnessValue.value = await ScreenBrightness.instance.system;
+        ScreenBrightness.instance.onApplicationScreenBrightnessChanged .listen((double value) {
+          if (mounted) {
+            _brightnessValue.value = value;
+          }
+        });
       } catch (_) {}
     });
   }
@@ -188,17 +188,17 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
   }
 
   Future<void> setBrightness(double value) async {
-    // try {
-    //   await ScreenBrightness().setScreenBrightness(value);
-    // } catch (_) {}
-    // _brightnessIndicator.value = true;
-    // _brightnessTimer?.cancel();
-    // _brightnessTimer = Timer(const Duration(milliseconds: 200), () {
-    //   if (mounted) {
-    //     _brightnessIndicator.value = false;
-    //   }
-    // });
-    // widget.controller.brightness.value = value;
+    try {
+      await ScreenBrightness.instance.setApplicationScreenBrightness(value);
+    } catch (_) {}
+    _brightnessIndicator.value = true;
+    _brightnessTimer?.cancel();
+    _brightnessTimer = Timer(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        _brightnessIndicator.value = false;
+      }
+    });
+    widget.controller.brightness.value = value;
   }
 
   @override
