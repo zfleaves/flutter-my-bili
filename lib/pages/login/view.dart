@@ -195,7 +195,9 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextButton(onPressed: () {}, child: const Text('中国大陆')),
                         TextButton(
-                          onPressed: () => _loginPageCtr.nextStep,
+                          onPressed: () {
+                            _loginPageCtr.nextStep();
+                          },
                           style: TextButton.styleFrom(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                             foregroundColor:

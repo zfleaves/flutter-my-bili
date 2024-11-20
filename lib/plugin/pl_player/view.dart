@@ -604,8 +604,8 @@ class _PLVideoPlayerState extends State<PLVideoPlayer>
         // }),
 
         /// 弹幕面板
-        // if (widget.danmuWidget != null)
-        //   Positioned.fill(top: 4, child: widget.danmuWidget!),
+        if (widget.danmuWidget != null)
+          Positioned.fill(top: 4, child: widget.danmuWidget!),
 
         /// 开启且有字幕时展示
         Stack(

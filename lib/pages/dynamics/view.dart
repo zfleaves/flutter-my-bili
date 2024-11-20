@@ -51,10 +51,14 @@ class _DynamicsPageState extends State<DynamicsPage>
     });
 
     _dynamicsController.userLogin.listen((status) {
-      if (mounted) {
+      // if (mounted) {
+      //   _futureBuilderFuture = _dynamicsController.queryFollowDynamic();
+      //   _futureBuilderFutureUp = _dynamicsController.queryFollowUp();
+      // }
+      setState(() {
         _futureBuilderFuture = _dynamicsController.queryFollowDynamic();
         _futureBuilderFutureUp = _dynamicsController.queryFollowUp();
-      }
+      });
     });
   }
 
