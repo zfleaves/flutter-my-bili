@@ -173,8 +173,7 @@ class _MainAppState extends State<MainApp> {
     localCache.put('statusBarHeight', statusBarHeight);
     return PopScope(
         canPop: false,
-        // ignore: deprecated_member_use
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, dynamic) {
           _mainController.onBackPressed(context);
         },
         child: Scaffold(

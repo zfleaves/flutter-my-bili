@@ -20,7 +20,7 @@ class LiveCardV extends StatelessWidget {
       onLongPress: () =>
           imageSaveDialog(context, liveItem, SmartDialog.dismiss),
       onTap: () {
-        Get.toNamed('/liveRoom?roomId=${liveItem.roomId}',
+        Get.toNamed('/liveRoom?roomid=${liveItem.roomId}',
             arguments: {'liveItem': liveItem, 'heroTag': heroTag});
       },
       child: Column(

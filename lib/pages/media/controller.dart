@@ -15,13 +15,8 @@ class MediaController extends GetxController {
     {
       'icon': Icons.file_download_outlined,
       'title': '离线缓存',
-      // 'onTap': () {
-      //   SmartDialog.showToast('功能开发中');
-      // },
-      'onTap': () async {
-        double _currentBrightness = await ScreenBrightness.instance.system;
-        print(_currentBrightness);
-        ScreenBrightness.instance.setSystemScreenBrightness(0);
+      'onTap': () {
+        SmartDialog.showToast('功能开发中');
       },
     },
     {
