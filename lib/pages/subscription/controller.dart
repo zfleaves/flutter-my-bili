@@ -1,4 +1,5 @@
 import 'package:bilibili/http/user.dart';
+import 'package:bilibili/models/common/sub_type.dart';
 import 'package:bilibili/models/user/info.dart';
 import 'package:bilibili/models/user/sub_folder.dart';
 import 'package:bilibili/utils/storage.dart';
@@ -15,11 +16,16 @@ class SubController extends GetxController {
   int currentPage = 1;
   int pageSize = 20;
   RxBool hasMore = true.obs;
+  int tabIndex = 0;
+  RxList subTabs = [].obs;
 
   @override
   void onInit() {
     super.onInit();
     userInfo = userInfoCache.get('userInfoCache');
+    subTabs.value = SubType.values
+        .map((type) => {'label': type.label, 'id': type.id, 'type': type.type})
+        .toList();
   }
 
   Future<dynamic> querySubFolder({type = 'init'}) async {

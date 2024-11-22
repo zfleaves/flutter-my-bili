@@ -1,5 +1,6 @@
 import 'package:bilibili/http/api.dart';
 import 'package:bilibili/http/init.dart';
+import 'package:bilibili/models/common/sub_type.dart';
 import 'package:bilibili/models/model_hot_video_item.dart';
 import 'package:bilibili/models/user/fav_detail.dart';
 import 'package:bilibili/models/user/fav_folder.dart';
@@ -7,6 +8,7 @@ import 'package:bilibili/models/user/history.dart';
 import 'package:bilibili/models/user/info.dart';
 import 'package:bilibili/models/user/stat.dart';
 import 'package:bilibili/models/user/sub_folder.dart';
+import 'package:bilibili/models/user/sub_scribe.dart';
 
 class UserHttp {
   static Future<dynamic> userStat({required int mid}) async {
@@ -40,7 +42,6 @@ class UserHttp {
       return {'status': false, 'msg': res.data['message']};
     }
   }
-  
 
   // 收藏夹
   static Future<dynamic> userfavFolder({
@@ -69,7 +70,7 @@ class UserHttp {
     }
   }
 
-    /// 收藏夹 详情
+  /// 收藏夹 详情
   static Future<dynamic> userFavFolderDetail(
       {required int mediaId,
       required int pn,
@@ -157,7 +158,7 @@ class UserHttp {
     return res;
   }
 
-    // 观看历史暂停状态
+  // 观看历史暂停状态
   static Future historyStatus() async {
     var res = await Request().get(Api.historyStatus);
     return res;
@@ -305,6 +306,89 @@ class UserHttp {
         'msg': res.data['message'],
         'code': res.data['code'],
       };
+    }
+  }
+
+  // 我的订阅
+  static Future userCustomSubFolder({
+    required SubType subType,
+    required int mid,
+    required int pn,
+    required int ps,
+    required int followStatus,
+  }) async {
+    var res = await Request().get(Api.userCustomSubFolder, data: {
+      'vmid': mid,
+      'ps': ps,
+      'pn': pn,
+      'follow_status': followStatus,
+      'ts': DateTime.now().microsecondsSinceEpoch,
+      'type': subType.type
+      // 'platform': 'web',
+    });
+    try {
+      if (res.data['code'] == 0) {
+        return {
+          'status': true,
+          'data': SubScribeModelData.fromJson(res.data['data']),
+        };
+      } else {
+        return {
+          'status': false,
+          'data': [],
+          'msg': res.data['message'],
+          'code': res.data['code'],
+        };
+      }
+    } catch (err) {
+      print(err);
+      return {
+        'status': false,
+        'data': [],
+        'msg': res.data['message'],
+        'code': res.data['code'],
+      };
+    }
+  }
+
+  // 给追番追剧标记状态
+  static Future userUpdateSubFolder({
+    required int seasonId,
+    required int status
+  }) async {
+    // season_id
+    var res = await Request().post(
+      Api.userUpdateSubFolder,
+      queryParameters: {
+        'status': status,
+        'season_id': seasonId
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {'status': true};
+    } else {
+      return {'status': false, 'msg': res.data['message']};
+    }
+  }
+
+  // 取消追番追剧标记状态
+  static Future delSub({
+    required int seasonId,
+    required int seasonType
+  }) async {
+    // season_id
+    var res = await Request().post(
+      Api.delSubFolder,
+      queryParameters: {
+        'season_type': seasonType,
+        'season_id': seasonId,
+        'csrf': await Request.getCsrf(),
+      },
+    );
+    if (res.data['code'] == 0) {
+      return {'status': true};
+    } else {
+      return {'status': false, 'msg': res.data['message']};
     }
   }
 

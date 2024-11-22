@@ -31,6 +31,14 @@ class PBadge extends StatelessWidget {
     Color color = t.onPrimary;
     // 边框色
     Color borderColor = Colors.transparent;
+    if (type == 'owner') {
+      bgColor = const Color.fromRGBO(0, 192, 255, 1);
+      color = Colors.white;
+    }
+    if (type == 'vip') {
+      bgColor = const Color.fromRGBO(251, 114, 153, 1);
+      color = Colors.white;
+    }
     if (type == 'gray') {
       bgColor = Colors.black54.withOpacity(0.4);
       color = Colors.white;

@@ -502,6 +502,15 @@ class Api {
   /// 我的订阅
   static const userSubFolder = '/x/v3/fav/folder/collected/list';
 
+  /// 我的订阅2
+  static const userCustomSubFolder = '/x/space/bangumi/follow/list';
+
+  // 给订阅标记状态
+  static const userUpdateSubFolder = '/pgc/web/follow/status/update';
+
+  // 给订阅取消
+  static const delSubFolder = '/pgc/web/follow/del';
+
   /// 我的订阅详情 type 21
   static const userSeasonList = '/x/space/fav/season/list';
 

@@ -7,7 +7,6 @@ import 'package:bilibili/pages/dynamics/widgets/live_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/live_rcmd_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/pic_panel.dart';
 import 'package:bilibili/pages/dynamics/widgets/rich_node_panel.dart';
-import 'package:bilibili/pages/dynamics/widgets/rich_node_panel2.dart';
 import 'package:bilibili/pages/dynamics/widgets/video_panel.dart';
 import 'package:bilibili/utils/utils.dart';
 import 'package:flutter/material.dart';

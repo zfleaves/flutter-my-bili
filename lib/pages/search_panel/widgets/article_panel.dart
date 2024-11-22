@@ -3,6 +3,7 @@ import 'package:bilibili/common/widgets/network_img_layer.dart';
 import 'package:bilibili/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget searchArticlePanel(BuildContext context, ctr, list) {
   TextStyle textStyle = TextStyle(

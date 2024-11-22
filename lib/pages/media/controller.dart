@@ -31,7 +31,7 @@ class MediaController extends GetxController {
     },
     {
       'icon': Icons.subscriptions_outlined,
-      'title': '我的订阅',
+      'title': '追番追剧',
       'onTap': () => Get.toNamed('/subscription'),
     },
     {
