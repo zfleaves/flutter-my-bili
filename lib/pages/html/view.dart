@@ -174,7 +174,7 @@ class _HtmlRenderPageState extends State<HtmlRenderPage>
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.share_outlined, size: 19),
+                    Icon(Icons.share_outlined, size: 19),Icon(Icons.share_outlined, size: 19),
                     SizedBox(width: 10),
                     Text('分享'),
                   ],

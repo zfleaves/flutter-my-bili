@@ -6,6 +6,7 @@ import 'package:bilibili/pages/home/index.dart';
 import 'package:bilibili/pages/main/index.dart';
 import 'package:bilibili/pages/media/index.dart';
 import 'package:bilibili/pages/rank/index.dart';
+import 'package:bilibili/pages/tv_series/index.dart';
 import 'package:bilibili/utils/event_bus.dart';
 import 'package:bilibili/utils/feed_back.dart';
 import 'package:bilibili/utils/global_data.dart';
@@ -27,6 +28,7 @@ class _MainAppState extends State<MainApp> {
   final RankController _rankController = Get.put(RankController());
   final DynamicsController _dynamicController = Get.put(DynamicsController());
   final MediaController _mediaController = Get.put(MediaController());
+  final TvSeriesController _tvSeriesController = Get.put(TvSeriesController());
 
   int? _lastSelectTime; // 上次点击时间
   Box setting = GStrorage.setting;
@@ -96,6 +98,21 @@ class _MainAppState extends State<MainApp> {
 
     if (currentPage is MediaPage) {
       _mediaController.queryFavFolder();
+    }
+
+    if (currentPage is TvSeries) {
+      if (_tvSeriesController.flag) {
+        // 单击返回顶部 双击并刷新
+        if (DateTime.now().millisecondsSinceEpoch - _lastSelectTime! < 500) {
+          _tvSeriesController.onRefresh();
+        } else {
+          _tvSeriesController.animateToTop();
+        }
+        _lastSelectTime = DateTime.now().millisecondsSinceEpoch;
+      }
+      _tvSeriesController.flag = true;
+    } else {
+      _tvSeriesController.flag = false;
     }
   }
 

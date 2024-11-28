@@ -588,7 +588,7 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                           background: PopScope(
                             canPop:
                                 plPlayerController?.isFullScreen.value != true,
-                            onPopInvoked: (bool didPop) {
+                            onPopInvokedWithResult: (bool didPop, dynamic) {
                               if (plPlayerController?.isFullScreen.value ==
                                   true) {
                                 plPlayerController!
@@ -714,9 +714,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
     );
 
     if (Platform.isAndroid) {
+      // PiPSwitcher组件接受三个参数
       return PiPSwitcher(
+        // childWhenDisabled：当画中画（Picture-in-Picture，简称PiP）模式未启用时显示的子组件。
         childWhenDisabled: childWhenDisabled,
+        // childWhenEnabled：当画中画模式启用时显示的子组件，这里传入的是videoPlayerPanel，可能是一个视频播放面板。
         childWhenEnabled: videoPlayerPanel,
+        // floating：一个布尔值，可能用于控制PiPSwitcher组件是否以浮动窗口的形式展示。
         floating: floating,
       );
     } else {

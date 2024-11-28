@@ -28,9 +28,13 @@ class GStrorage {
         return deletedEntries > 2;
       },
     );
+    // 在使用 Hive 库来打开一个名为 'localCache' 的本地数据库（或称为“box”）。
+    // Hive 是一个轻量级的、面向对象的、NoSQL 数据库，它特别适合用于 Flutter 和 Dart 项目中的本地数据存储
     // 本地缓存
     localCache = await Hive.openBox(
       'localCache',
+      // 用于指定一个压缩策略
+      // 压缩策略是一个函数，它接收两个参数：entries（当前 box 中的条目数）和 deletedEntries（已被标记为删除但尚未物理删除的条目数）
       compactionStrategy: (int entries, int deletedEntries) {
         return deletedEntries > 4;
       },
@@ -55,6 +59,8 @@ class GStrorage {
         .get(SettingBoxKey.enablePlayerControlAnimation, defaultValue: true);
   }
 
+  // 在数据持久化、网络通信或任何需要将对象转换为字节流（序列化）或从字节流恢复对象（反序列化）的场景中，这种适配器都是非常有用的。
+  // 读取储存得字节流信息
   static void regAdapter() {
     Hive.registerAdapter(OwnerAdapter());
     Hive.registerAdapter(UserInfoDataAdapter());

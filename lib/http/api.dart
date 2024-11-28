@@ -280,6 +280,9 @@ class Api {
   // 取消追番
   static const String bangumiDel = '/pgc/web/follow/del';
 
+  // 追番
+  static const String followList = '/pgc/web/follow/status';
+
   // 番剧列表
   // https://api.bilibili.com/pgc/season/index/result?
   // st=1&
@@ -557,4 +560,16 @@ class Api {
 
   /// 收到的赞
   static const String messageLikeAPi = '/x/msgfeed/like';
+
+  /// 电视剧推荐
+  static const String rcmdTvList = '/pgc/page/web/feed';
+
+  /// 电视剧热播
+  static const String hitShowList = '/pgc/season/rank/web/list';
+
+  /// 全站搜索
+  static const String tvSeasonList = '/pgc/season/index/result';
+
+  // 全站搜索
+  static const String tvNavhideList = '/pgc/web/playlist';
 }

@@ -37,6 +37,7 @@ void main() async {
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   // 注入缓存 和 Hive // Flutter Hive 是一个在 Flutter 应用中用于数据持久化和状态管理的轻量级库
   await GStrorage.init();
+  // 音频控制播放器
   await setupServiceLocator();
   clearLogs();
   Request();
@@ -63,6 +64,7 @@ void main() async {
         statusBarColor: Colors.transparent));
   }
 
+  // 外部应用跳转
   BillSchame.init();
 }
 
@@ -111,40 +113,13 @@ class MyApp extends StatelessWidget {
         currentThemeValue: currentThemeValue,
         textScale: textScale,
       );
+    } else {
+      return OtherApp(
+        brandColor: brandColor,
+        currentThemeValue: currentThemeValue,
+        textScale: textScale,
+      );
     }
-
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('1222222'),
-        ),
-        body: Column(
-          children: [
-            const Text('地方2'),
-            TextField(
-                // autofocus: true,
-                onChanged: (value) {},
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                  ),
-                  hintText: '请输入搜索内容',
-                  contentPadding: EdgeInsets.all(0),
-                  hintStyle: TextStyle(fontSize: 14),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.black54,
-                  ),
-                )),
-          ],
-        ),
-      ),
-    );
   }
 }
 

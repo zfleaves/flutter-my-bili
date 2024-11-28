@@ -17,6 +17,7 @@ class AudioSessionHandler {
     session = await AudioSession.instance;
     session.configure(const AudioSessionConfiguration.music());
 
+    // 观察音频会话的中断：
     session.interruptionEventStream.listen((event) {
       final player = PlPlayerController(videoType: 'none');
       if (event.begin) {

@@ -1,5 +1,6 @@
 import 'package:bilibili/common/constants.dart';
 import 'package:bilibili/common/skeleton/video_card_h.dart';
+import 'package:bilibili/common/widgets/bottom_seat.dart';
 import 'package:bilibili/common/widgets/http_error.dart';
 import 'package:bilibili/common/widgets/no_data.dart';
 import 'package:bilibili/models/common/sub_type.dart';
@@ -150,13 +151,7 @@ class _SubPanelState extends State<SubPanel>
                       );
                     },
                   ),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      height: MediaQuery.of(context).padding.bottom,
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).padding.bottom),
-                    ),
-                  )
+                  const BottomSeat(),
                 ],
               ),
             )

@@ -52,6 +52,11 @@ class PBadge extends StatelessWidget {
       color = t.primary;
       borderColor = t.primary;
     }
+    if (type == 'transparent') {
+      bgColor = const Color.fromRGBO(57,25,18, 0.2);
+      color = Colors.white;
+      borderColor = Colors.transparent;
+    }
 
     EdgeInsets paddingStyle =
         const EdgeInsets.symmetric(vertical: 1, horizontal: 6);

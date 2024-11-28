@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage>
   showUserBottomSheet() {
     feedBack();
     showModalBottomSheet(
-      context: context, 
+      context: context,
       builder: (_) => const SizedBox(
         height: 450,
         child: MinePage(),
@@ -145,11 +145,9 @@ class _HomePageState extends State<HomePage>
                 const SizedBox(height: 6),
               ],
               Expanded(
-                child: TabBarView(
-                  controller: _homeController.tabController,
-                  children: _homeController.tabsPageList
-                )
-              )
+                  child: TabBarView(
+                      controller: _homeController.tabController,
+                      children: _homeController.tabsPageList))
             ],
           )
         ],
@@ -333,12 +331,13 @@ class SearchBar extends StatelessWidget {
                     color: colorScheme.onSecondaryContainer,
                   ),
                   const SizedBox(width: 10),
-                  Obx(() => Text(
+                  Obx(() => Expanded(
+                          child: Text(
                         ctr!.defaultSearch.value,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: colorScheme.outline),
-                      ))
+                      )))
                 ],
               ),
             ),
@@ -374,31 +373,34 @@ class _CustomTabsState extends State<CustomTabs> {
       height: 44,
       margin: const EdgeInsets.only(top: 4),
       child: Obx(() => ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 14.0),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (BuildContext context, int index) {
-          String label = _homeController.tabs[index]['label'];
-          return Obx(() => CustomChip(
-            onTap: () => onTap(index),
-            label: label, 
-            selected: index == _homeController.initialIndex.value
-          ));
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(width: 10,);
-        },
-        itemCount: _homeController.tabs.length
-      )),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            String label = _homeController.tabs[index]['label'];
+            return Obx(() => CustomChip(
+                onTap: () => onTap(index),
+                label: label,
+                selected: index == _homeController.initialIndex.value));
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(
+              width: 10,
+            );
+          },
+          itemCount: _homeController.tabs.length)),
     );
   }
 }
-
 
 class CustomChip extends StatelessWidget {
   final Function onTap;
   final String label;
   final bool selected;
-  const CustomChip({super.key, required this.onTap, required this.label, required this.selected});
+  const CustomChip(
+      {super.key,
+      required this.onTap,
+      required this.label,
+      required this.selected});
 
   @override
   Widget build(BuildContext context) {

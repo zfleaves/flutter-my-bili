@@ -24,7 +24,9 @@ Future imageSaveDialog(context, videoItem, closeFn) {
                 NetworkImgLayer(
                   width: imgWidth,
                   height: imgWidth / StyleString.aspectRatio,
-                  src: videoItem.pic! as String,
+                  src: videoItem.pic != null
+                            ? videoItem.pic as String
+                            : videoItem.cover as String,
                   quality: 100,
                 ),
                 Positioned(

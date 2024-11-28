@@ -37,7 +37,7 @@ class _SubPageState extends State<SubPage> with TickerProviderStateMixin {
         centerTitle: false,
         titleSpacing: 0,
         title: Text(
-          '我的订阅',
+          '我的追剧追番',
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),

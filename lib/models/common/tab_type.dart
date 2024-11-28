@@ -2,14 +2,16 @@ import 'package:bilibili/pages/bangumi/index.dart';
 import 'package:bilibili/pages/hot/index.dart';
 import 'package:bilibili/pages/live/index.dart';
 import 'package:bilibili/pages/rcmd/index.dart';
+import 'package:bilibili/pages/tv_series/controller.dart';
+import 'package:bilibili/pages/tv_series/view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-enum TabType { live, rcmd, hot, bangumi }
+enum TabType { live, rcmd, hot, bangumi, tv }
 
 extension TabTypeDesc on TabType {
-  String get description => ['直播', '推荐', '热门', '番剧'][index];
-  String get id => ['live', 'rcmd', 'hot', 'bangumi'][index];
+  String get description => ['直播', '推荐', '热门', '番剧', '电视剧'][index];
+  String get id => ['live', 'rcmd', 'hot', 'bangumi', 'tv'][index];
 }
 
 List tabsConfig = [
@@ -52,5 +54,15 @@ List tabsConfig = [
     'type': TabType.bangumi,
     'ctr': Get.find<BangumidController>,
     'page': const BangumiPage(),
+  },
+  {
+    'icon': const Icon(
+      Icons.tv,
+      size: 15,
+    ),
+    'label': '电视剧',
+    'type': TabType.tv,
+    'ctr': Get.find<TvSeriesController>,
+    'page': const TvSeries(),
   },
 ];

@@ -3,10 +3,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:core';
 
 import 'package:bilibili/http/api.dart';
 import 'package:bilibili/http/init.dart';
 import 'package:bilibili/models/github/latest.dart';
+import 'package:bilibili/models/tv/tv_search_type.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -393,5 +395,63 @@ class Utils  {
     final Iterable<Match> matches = regExp.allMatches(str);
 
     return matches.map((Match match) => int.parse(match.group(0)!)).toList();
+  }
+
+  static getDateString(DateTime time) {
+    // 查找毫秒部分的起始位置（即最后一个'.'的位置）
+    int millisecondIndex = time.toString().lastIndexOf('.');
+    // 如果找到了毫秒部分，则截取字符串到毫秒部分之前
+    if (millisecondIndex != -1) {
+      return time.toString().substring(0, millisecondIndex);
+    }
+    return time.toString();
+  }
+
+  static List<YearListItem> generateYearList() {
+    final List<YearListItem> list = [YearListItem(label: '全部年份', id: 'all', releaseDate: '-1'),];
+    final int currentYear = DateTime.now().year;
+
+    // Add full years range
+    for (int year = currentYear; year >= 2016; year--) {
+      list.add(YearListItem(
+        label: '$year年',
+        id: '$year',
+        releaseDate: [
+          getDateString(DateTime(year, 1, 1)),
+          getDateString(DateTime(year + 1, 1, 1)),
+        ],
+      ));
+    }
+ 
+    // Add decade ranges
+    for (int startYear = 2015; startYear >= 2010; startYear -= 5) {
+      final int endYear = startYear - 4;
+      list.add(YearListItem(
+        label: '$startYear~$endYear年',
+        id: '$startYear', // Or use a composite ID if needed
+        releaseDate: [
+          getDateString(DateTime(startYear, 1, 1, 0, 0, 0)),
+          getDateString(DateTime(endYear + 1, 1, 1, 0, 0, 0)),
+        ],
+      ));
+    }
+ 
+    // Add earlier decades as labeled ranges
+    for (int decade = 2; decade >= 0; decade--) {
+      final int startYear = decade * 10;
+      final int endYear = startYear + 9;
+      list.add(YearListItem(
+        label: '$startYear年代',
+        id: '$startYear', // Or use a composite ID if needed
+        releaseDate: [
+          getDateString(DateTime(startYear, 1, 1)),
+          getDateString(DateTime(endYear + 1, 1, 1)),
+        ],
+      ));
+    }
+ 
+    // Optionally, handle special cases for the 2000s if needed separately
+ 
+    return list;
   }
 }

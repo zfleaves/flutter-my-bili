@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bilibili/http/danmaku.dart';
@@ -281,6 +282,7 @@ class VideoDetailController extends GetxController
   Future queryVideoUrl() async {
     var result =
         await VideoHttp.videoUrl(cid: cid.value, bvid: bvid, qn: cacheVideoQa);
+    log(result.toString());
     if (result['status']) {
       data = result['data'];
       if (data.acceptDesc!.isNotEmpty && data.acceptDesc!.contains('试看')) {

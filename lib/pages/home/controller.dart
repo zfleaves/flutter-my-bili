@@ -67,7 +67,7 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   void setTabConfig() async {
     defaultTabs = [...tabsConfig];
     tabbarSort = settingStorage.get(SettingBoxKey.tabbarSort,
-        defaultValue: ['live', 'rcmd', 'hot', 'bangumi']);
+        defaultValue: ['live', 'rcmd', 'hot', 'bangumi', 'tv']);
     // 如果item['type'].id在tabbarSort中，则item会被保留；否则，item会被移除
     defaultTabs.retainWhere(
         (item) => tabbarSort.contains((item['type'] as TabType).id));
@@ -75,8 +75,8 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
         .indexOf((a['type'] as TabType).id)
         .compareTo(tabbarSort.indexOf((b['type'] as TabType).id)));
     tabs.value = defaultTabs;
-    if (tabbarSort.contains(TabType.rcmd.id)) {
-      initialIndex.value = tabbarSort.indexOf(TabType.rcmd.id);
+    if (tabbarSort.contains(TabType.tv.id)) {
+      initialIndex.value = tabbarSort.indexOf(TabType.tv.id);
     } else {
       initialIndex.value = 0;
     }

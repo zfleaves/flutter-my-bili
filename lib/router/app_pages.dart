@@ -47,6 +47,9 @@ import 'package:bilibili/pages/setting/pages/recommend_setting.dart';
 import 'package:bilibili/pages/setting/pages/style_setting.dart';
 import 'package:bilibili/pages/subscription/index.dart';
 import 'package:bilibili/pages/subscription_detail/index.dart';
+import 'package:bilibili/pages/tv_navhide/view.dart';
+import 'package:bilibili/pages/tv_rank_top/view.dart';
+import 'package:bilibili/pages/tv_search/view.dart';
 import 'package:bilibili/pages/video/detail/index.dart';
 import 'package:bilibili/pages/video/detail/reply_reply/index.dart';
 import 'package:bilibili/pages/webview/index.dart';
@@ -169,6 +172,12 @@ class Routes {
     CustomGetPage(name: '/messageLike', page: () => const MessageLikePage()),
     // 系统通知
     CustomGetPage(name: '/messageSystem', page: () => const MessageSystemPage()),
+    // 热播推荐榜
+    CustomGetPage(name: '/tvRankTop', page: () => const TvRankTopPage()),
+    // 找剧
+    CustomGetPage(name: '/tvSearch', page: () => const TvSearchPage()),
+    // B站出品高分好剧
+    CustomGetPage(name: '/tvNavhide', page: () => const TvNavhidePage()),
   ];
 }
 
