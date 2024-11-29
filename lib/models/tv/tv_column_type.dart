@@ -27,12 +27,12 @@ List<ListItem> tvColumnTypeConfig = [
     color: const Color.fromRGBO(6,194,21, 1),
     onTap: () => Get.toNamed('/tvNavhide?id=71501&title=豆瓣高分'),
   ),
-  ListItem(
-    icon: FontAwesomeIcons.handSparkles,
-    label: '新奇剧场',
-    color: const Color.fromRGBO(30,30,30, 1),
-    onTap: () => Get.toNamed('/history'),
-  ),
+  // ListItem(
+  //   icon: FontAwesomeIcons.handSparkles,
+  //   label: '新奇剧场',
+  //   color: const Color.fromRGBO(30,30,30, 1),
+  //   onTap: () => Get.toNamed('/history'),
+  // ),
   ListItem(
     icon: Icons.south_america,
     label: '经典美剧',

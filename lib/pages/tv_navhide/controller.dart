@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:bilibili/http/tv.dart';
 import 'package:bilibili/http/user.dart';
 import 'package:bilibili/http/video.dart';
+import 'package:bilibili/models/common/sub_type.dart';
 import 'package:bilibili/models/tv/tv_navhide.dart';
 import 'package:bilibili/utils/storage.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class TvNavhideController extends GetxController {
   RxList<TvNavhideItem> navhideList = <TvNavhideItem>[].obs;
   dynamic userInfo;
   Box userInfoCache = GStrorage.userInfo;
-  late Map followMap;
+  List followList = [];
 
   @override
   void onInit() {
@@ -34,44 +35,72 @@ class TvNavhideController extends GetxController {
 
   // 查询电视剧热播列表
   Future queryTvNavhideList() async {
+    SmartDialog.showLoading();
     try {
       var result = await TVhttp.tvNavhideList(id: int.parse(id));
       if (result['status']) {
-        followMap = await queryFollowList(
-            seasonIds: result['data']
-                .seasons
-                .map((item) => item.seasonId)
-                .toList()
-                .join(','));
+        await queryFollowList();
         for (var i = 0; i < result['data'].seasons.length; i++) {
           var item = result['data'].seasons[i];
-          item.isFollow = followMap[item.seasonId.toString()]['is_follow'];
+          if (followList == []) break;
+          int index = followList.indexWhere((val) => val.seasonId == item.seasonId);
+          item.isFollow = index >= 0 ? 1 : 0;
         }
         navhideList.value = result['data'].seasons;
-        upInfo.value = result['data'].upInfo;
-        isFollowed.value = upInfo.value.isFollow ?? 0;
-        followedMsg.value = isFollowed.value == 1 ? '已关注' : '未关注';
-        // print(isFollowed.value);
-        // print(followedMsg.value);
+        if (id != '70314') { // 美剧没有up主
+          upInfo.value = result['data'].upInfo;
+          isFollowed.value = upInfo.value.isFollow ?? 0;
+          followedMsg.value = isFollowed.value == 1 ? '已关注' : '未关注';
+        }
         summary.value = result['data'].summary;
         title.value = result['data'].title;
         total.value = result['data'].total;
       }
+      SmartDialog.dismiss();
       return result;
     } catch (err) {
       print(err);
+      SmartDialog.dismiss();
       return null;
     }
   }
 
   // 查询追剧列表
-  Future queryFollowList({required String seasonIds}) async {
-    var result = await TVhttp.queryFollowList(seasonIds: seasonIds);
-    return result['data'];
+  // {required String seasonIds}
+  Future queryFollowList() async {
+    if (userInfo == null) {
+      SmartDialog.showToast('账号未登录');
+      followList = [];
+      return;
+    }
+    // var result = await TVhttp.queryFollowList(seasonIds: seasonIds);
+    // return result['data'];
+    followList = [];
+    int page = 1;
+    await querySubFolderList(page);
   }
 
+  // 查询我的追剧列表
+  Future querySubFolderList(int page) async {
+    var result = await UserHttp.userCustomSubFolder(
+      subType: SubType.video,
+      pn: page,
+      ps: 20,
+      mid: userInfo.mid,
+      followStatus: 0
+    );
+    if (result['status']) {
+      followList.addAll(result['data'].list);
+      if (followList.length < result['data'].total) {
+        page = page + 1;
+        await querySubFolderList(page);
+      }
+    }
+  }
+
+
   Future updateSub(dynamic tvItem) async {
-    var res;
+    dynamic res;
     String msg = tvItem.isFollow == 1 ? '已取消追剧' : '追剧成功';
     if (tvItem.isFollow == 1) {
       res = await UserHttp.delSub(

@@ -39,7 +39,7 @@ class TvNavhideMode {
       summary: json['summary'],
       title: json['title'],
       total: json['total'],
-      upInfo: UpInfo.fromJson(json['upInfo']),
+      upInfo: json['upInfo'] != null ? UpInfo.fromJson(json['upInfo']) : null,
     );
   }
 }

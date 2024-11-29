@@ -191,6 +191,7 @@ class TVhttp {
     var res = await Request().get(Api.followList, data: {
       'season_ids': seasonIds,
     });
+    print(res);
     if (res.data['code'] == 0) {
       return {
         'status': true,

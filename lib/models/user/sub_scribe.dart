@@ -14,7 +14,7 @@ class SubScribeModelData {
     return SubScribeModelData(
       ps: json['ps'],
       pn: json['pn'],
-      total: json['count'],
+      total: json['total'],
       list: json['list'] != null
           ? (json['list'] as List)
               .map<SubScribeItemData>((i) => SubScribeItemData.fromJson(i))
