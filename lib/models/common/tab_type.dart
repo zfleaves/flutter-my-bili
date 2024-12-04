@@ -1,17 +1,17 @@
 import 'package:bilibili/pages/bangumi/index.dart';
 import 'package:bilibili/pages/hot/index.dart';
 import 'package:bilibili/pages/live/index.dart';
+import 'package:bilibili/pages/movie/index.dart';
 import 'package:bilibili/pages/rcmd/index.dart';
-import 'package:bilibili/pages/tv_series/controller.dart';
-import 'package:bilibili/pages/tv_series/view.dart';
+import 'package:bilibili/pages/tv_series/index.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-enum TabType { live, rcmd, hot, bangumi, tv }
+enum TabType { live, rcmd, hot, bangumi, tv, movie }
 
 extension TabTypeDesc on TabType {
-  String get description => ['直播', '推荐', '热门', '番剧', '电视剧'][index];
-  String get id => ['live', 'rcmd', 'hot', 'bangumi', 'tv'][index];
+  String get description => ['直播', '推荐', '热门', '番剧', '电视剧', '电影'][index];
+  String get id => ['live', 'rcmd', 'hot', 'bangumi', 'tv', 'movie'][index];
 }
 
 List tabsConfig = [
@@ -64,5 +64,15 @@ List tabsConfig = [
     'type': TabType.tv,
     'ctr': Get.find<TvSeriesController>,
     'page': const TvSeries(),
+  },
+  {
+    'icon': const Icon(
+      Icons.movie,
+      size: 15,
+    ),
+    'label': '电影',
+    'type': TabType.movie,
+    'ctr': Get.find<MovieController>,
+    'page': const MoviePage(),
   },
 ];

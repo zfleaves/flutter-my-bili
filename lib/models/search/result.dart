@@ -465,3 +465,117 @@ class SearchArticleItemModel {
     categoryName = json['category_name'];
   }
 }
+
+class SearchMovieModel {
+  SearchMovieModel({this.list});
+  List<SearchMovieItemModel>? list;
+  SearchMovieModel.fromJson(Map<String, dynamic> json) {
+    list = json['result'] != null
+        ? json['result']
+            .map<SearchMovieItemModel>(
+                (e) => SearchMovieItemModel.fromJson(e))
+            .toList()
+        : [];
+  }
+}
+
+class SearchMovieItemModel {
+  SearchMovieItemModel({
+    this.type,
+    this.areas,
+    this.cover,
+    this.pic,
+    this.cv,
+    this.desc,
+    this.isFollow,
+    this.mediaId,
+    this.mediaScore,
+    this.mediaType,
+    this.orgTitle,
+    this.pubtime,
+    this.seasonId,
+    this.seasonType,
+    this.seasonTypeName,
+    this.staff,
+    this.styles,
+    this.title,
+    this.url,
+    this.badges,
+  });
+
+  String? type;
+  String? areas;
+  String? cover;
+  String? pic;
+  String? cv;
+  String? desc;
+  int? isFollow;
+  int? mediaId;
+  MediaScore? mediaScore;
+  int? mediaType;
+  String? orgTitle;
+  int? pubtime;
+  int? seasonId;
+  int? seasonType;
+  String? seasonTypeName;
+  String? staff;
+  String? styles;
+  String? title;
+  String? url;
+  List<BadgeItem>? badges;
+
+  SearchMovieItemModel.fromJson(Map<String, dynamic> json) {
+    type = json['type'];
+    areas = json['areas'];
+    cover = json['cover'];
+    pic = json['cover'];
+    cv = json['cv'];
+    desc = json['desc'];
+    isFollow = json['is_follow'];
+    mediaId = json['media_id'];
+    mediaScore = MediaScore.fromJson(json['media_score']);
+    mediaType = json['media_type'];
+    orgTitle = json['org_title'].replaceAll(RegExp(r'<.*?>'), '');
+    pubtime = json['pubtime'];
+    seasonId = json['season_id'];
+    seasonType = json['season_type'];
+    seasonTypeName = json['season_type_name'];
+    staff = json['staff'];
+    styles = json['styles'];
+    title = json['title'].replaceAll(RegExp(r'<.*?>'), '');
+    url = json['url'];
+    badges = json['badges'] == null
+        ? []
+        : json['badges']
+            .map<BadgeItem>((e) => BadgeItem.fromJson(e))
+            .toList();
+  }
+}
+
+class MediaScore {
+  MediaScore({
+    this.score,
+    this.userCount,
+  });
+  double? score;
+  int? userCount;
+
+  MediaScore.fromJson(Map<String, dynamic> json) {
+    score = json["score"];
+    userCount = json["user_count"];
+  }
+}
+
+class BadgeItem {
+  BadgeItem({
+    this.text,
+    this.textColor,
+  });
+  String? text;
+  String? textColor;
+
+  BadgeItem.fromJson(Map<String, dynamic> json) {
+    text = json["text"];
+    textColor = json["text_color"];
+  }
+}

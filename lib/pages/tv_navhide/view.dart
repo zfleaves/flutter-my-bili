@@ -8,7 +8,6 @@ import 'package:bilibili/pages/tv_navhide/widgets/more_detail.dart';
 import 'package:bilibili/pages/tv_navhide/widgets/tv_navhide_card.dart';
 import 'package:bilibili/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -95,93 +94,93 @@ class _TvNavhidePageState extends State<TvNavhidePage> {
                       const SliverToBoxAdapter(
                         child: SizedBox(height: 10),
                       ),
-                      // if (upInfo.mid != null) ...[
-                      //   SliverToBoxAdapter(
-                      //     child: Row(
-                      //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //       crossAxisAlignment: CrossAxisAlignment.center,
-                      //       children: [
-                      //         Expanded(
-                      //           child: GestureDetector(
-                      //             onTap: () {
-                      //               Get.toNamed('/member?mid=${upInfo.mid}',
-                      //                   arguments: {
-                      //                     'face': upInfo.avatar,
-                      //                     'heroTag': Utils.makeHeroTag(upInfo.mid),
-                      //                     'uname': upInfo.uname
-                      //                   });
-                      //             },
-                      //             child: Row(
-                      //               children: [
-                      //                 const SizedBox(
-                      //                   width: 14,
-                      //                 ),
-                      //                 Hero(
-                      //                   tag: Utils.makeHeroTag(upInfo.mid),
-                      //                   child: NetworkImgLayer(
-                      //                     width: 30,
-                      //                     height: 30,
-                      //                     type: 'avatar',
-                      //                     src: upInfo.avatar,
-                      //                   ),
-                      //                 ),
-                      //                 const SizedBox(
-                      //                   width: 8,
-                      //                 ),
-                      //                 Text(
-                      //                   upInfo.uname!,
-                      //                   style: TextStyle(
-                      //                     fontSize: labelLarge?.fontSize,
-                      //                     fontWeight: FontWeight.bold,
-                      //                     color: Colors.white,
-                      //                   ),
-                      //                 ),
-                      //                 const SizedBox(
-                      //                   width: 8,
-                      //                 ),
-                      //                 Text('发起',
-                      //                     style: TextStyle(
-                      //                       fontSize: labelLarge?.fontSize,
-                      //                       color: Colors.white,
-                      //                     )),
-                      //               ],
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         SizedBox(
-                      //             height: 30,
-                      //             child: Obx(() => TextButton(
-                      //                   onPressed: () => _tvNavhideController
-                      //                       .actionRelationMod(),
-                      //                   style: TextButton.styleFrom(
-                      //                     padding: const EdgeInsets.fromLTRB(
-                      //                         15, 0, 15, 0),
-                      //                     foregroundColor: _tvNavhideController
-                      //                                 .isFollowed.value ==
-                      //                             1
-                      //                         ? Theme.of(context)
-                      //                             .colorScheme
-                      //                             .outline
-                      //                         : Theme.of(context)
-                      //                             .colorScheme
-                      //                             .onPrimary,
-                      //                     backgroundColor: _tvNavhideController
-                      //                                 .isFollowed.value ==
-                      //                             1
-                      //                         ? Theme.of(context)
-                      //                             .colorScheme
-                      //                             .onInverseSurface
-                      //                         : Theme.of(context)
-                      //                             .colorScheme
-                      //                             .primary, // 设置按钮背景色
-                      //                   ),
-                      //                   child: Text(_tvNavhideController
-                      //                       .followedMsg.value),
-                      //                 )))
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ],
+                      if (upInfo.mid != null) ...[
+                        SliverToBoxAdapter(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed('/member?mid=${upInfo.mid}',
+                                        arguments: {
+                                          'face': upInfo.avatar,
+                                          'heroTag': Utils.makeHeroTag(upInfo.mid),
+                                          'uname': upInfo.uname
+                                        });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 14,
+                                      ),
+                                      Hero(
+                                        tag: Utils.makeHeroTag(upInfo.mid),
+                                        child: NetworkImgLayer(
+                                          width: 30,
+                                          height: 30,
+                                          type: 'avatar',
+                                          src: upInfo.avatar,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        upInfo.uname!,
+                                        style: TextStyle(
+                                          fontSize: labelLarge?.fontSize,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('发起',
+                                          style: TextStyle(
+                                            fontSize: labelLarge?.fontSize,
+                                            color: Colors.white,
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                  height: 30,
+                                  child: Obx(() => TextButton(
+                                        onPressed: () => _tvNavhideController
+                                            .actionRelationMod(),
+                                        style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 0, 15, 0),
+                                          foregroundColor: _tvNavhideController
+                                                      .isFollowed.value ==
+                                                  1
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .outline
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                          backgroundColor: _tvNavhideController
+                                                      .isFollowed.value ==
+                                                  1
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onInverseSurface
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary, // 设置按钮背景色
+                                        ),
+                                        child: Text(_tvNavhideController
+                                            .followedMsg.value),
+                                      )))
+                            ],
+                          ),
+                        ),
+                      ],
                       SliverToBoxAdapter(
                         child: Container(
                           height: 220,
@@ -229,20 +228,28 @@ class _TvNavhidePageState extends State<TvNavhidePage> {
                           ),
                         ),
                       ),
-                      Obx(() => contentGrid(
-                          _tvNavhideController,
-                          _tvNavhideController.navhideList.sublist(0, firstNum)
-                          // _tvNavhideController.navhideList
-                        )),
-                      SliverToBoxAdapter(
-                        child: CustomButton(
-                          text: '查看更多',
-                          color: const Color.fromRGBO(12, 177, 241, 1),
-                          cb: () {
-                            showMoreBottomSheet(context);
-                          },
-                        ),
+                      SliverPadding(
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        sliver: Obx(() {
+                          final int len = _tvNavhideController.navhideList.length > firstNum ? firstNum : _tvNavhideController.navhideList.length;
+                          print(len);
+                          return contentGrid(
+                            _tvNavhideController,
+                            _tvNavhideController.navhideList.sublist(0, len)
+                          );
+                        }),
                       ),
+                      if (_tvNavhideController.navhideList.length > firstNum) ...[
+                        SliverToBoxAdapter(
+                          child: CustomButton(
+                            text: '查看更多',
+                            color: const Color.fromRGBO(12, 177, 241, 1),
+                            cb: () {
+                              showMoreBottomSheet(context);
+                            },
+                          ),
+                        ),
+                      ],
                       SliverToBoxAdapter(
                         child: Visibility(
                           visible: _tvNavhideController.id == '61060',

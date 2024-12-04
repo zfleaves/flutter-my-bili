@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bilibili/http/index.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
@@ -112,5 +114,34 @@ class HtmlHttp {
       'content': opusContent,
       'commentId': int.parse(number)
     };
+  }
+
+  static Future reqHtmlMovie({required int seasonId}) async {
+    var response = await Request().get(
+      "https://www.bilibili.com/bangumi/play/ss$seasonId?theme=movie",
+      extra: {'ua': 'pc'},
+    );
+
+    Document rootTree = parse(response.data);
+    // print(rootTree);
+    // print(rootTree.outerHtml);
+    String playurlSSRDataStr = getStringBetween(rootTree.outerHtml, 'const playurlSSRData = ', 'if (playurlSSRData) {');
+    // print(playurlSSRDataStr);
+    // 使用 jsonDecode 将字符串转换为 Dart 对象（Map<String, dynamic>）
+    Map<String, dynamic> result = jsonDecode(playurlSSRDataStr);
+    // print(result);
+    return result;
+  }
+
+  static String getStringBetween(String source, String startTag, String endTag) {
+    int startIndex = source.indexOf(startTag);
+    if (startIndex == -1) return ""; // 如果没有找到开始标记，返回空字符串
+  
+    startIndex += startTag.length; // 跳过开始标记的长度
+  
+    int endIndex = source.indexOf(endTag, startIndex);
+    if (endIndex == -1) return ""; // 如果没有找到结束标记，返回空字符串
+  
+    return source.substring(startIndex, endIndex); // 返回开始和结束标记之间的字符串
   }
 }

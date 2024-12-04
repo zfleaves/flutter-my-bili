@@ -23,6 +23,7 @@ class BangumiInfoModel {
     this.seasonId,
     this.seasonTitle,
     this.seasons,
+    this.section,
     this.series,
     this.shareCopy,
     this.shareSubTitle,
@@ -64,6 +65,7 @@ class BangumiInfoModel {
   int? seasonId;
   String? seasonTitle;
   List? seasons;
+  List? section;
   Map? series;
   String? shareCopy;
   String? shareSubTitle;
@@ -107,6 +109,7 @@ class BangumiInfoModel {
     seasonId = json['season_id'];
     seasonTitle = json['season_title'];
     seasons = json['seasons'];
+    section = json['section'];
     series = json['series'];
     shareCopy = json['share_copy'];
     shareSubTitle = json['share_sub_title'];

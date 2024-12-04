@@ -7,15 +7,40 @@ import 'package:get/get.dart';
 
 class RoutePush {
   static Future<void> bangumiPush(int? seasonId, int? epId,
-      {String? heroTag}) async {
+      {String? heroTag, SearchType? videoType = SearchType.media_bangumi }) async {
     SmartDialog.showLoading<dynamic>(msg: '获取中...');
     try {
       var result = await SearchHttp.bangumiInfo(seasonId: seasonId, epId: epId);
+      print(result);
       await SmartDialog.dismiss();
       if (result['status']) {
         if (result['data'].episodes.isEmpty) {
-          SmartDialog.showToast('资源获取失败');
-          return;
+          if (result['data'].section.isEmpty) {
+            SmartDialog.showToast('资源获取失败');
+            return;
+          }
+          final BangumiInfoModel bangumiDetail = result['data'];
+          final sectionItem = bangumiDetail.section!.first;
+          if (sectionItem['episodes'].isNotEmpty) {
+            final dynamic episode = sectionItem['episodes']!.first;
+            print(episode);
+            final int epId = episode['ep_id'];
+            final int cid = episode['cid'];
+            final String bvid = episode['bvid'];
+            final String cover = episode['cover'];
+            final Map arguments = <String, dynamic>{
+              'pic': cover,
+              'videoType': videoType
+              // 'bangumiItem': bangumiDetail,
+            };
+            print(arguments);
+            arguments['heroTag'] = heroTag ?? Utils.makeHeroTag(cid);
+            Get.toNamed(
+              '/video?bvid=$bvid&cid=$cid&epId=$epId',
+              arguments: arguments,
+            );
+            return;
+          }
         }
         final BangumiInfoModel bangumiDetail = result['data'];
         final EpisodeItem episode = bangumiDetail.episodes!.first;
@@ -25,12 +50,13 @@ class RoutePush {
         final String cover = episode.cover!;
         final Map arguments = <String, dynamic>{
           'pic': cover,
-          'videoType': SearchType.media_bangumi,
+          'videoType': videoType
           // 'bangumiItem': bangumiDetail,
         };
+        print(arguments);
         arguments['heroTag'] = heroTag ?? Utils.makeHeroTag(cid);
         Get.toNamed(
-          '/video?bvid=$bvid&cid=$cid&epId=$epId',
+          '/video?bvid=$bvid&cid=$cid&epId=$epId&seasonId=$seasonId',
           arguments: arguments,
         );
       } else {

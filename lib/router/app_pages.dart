@@ -28,6 +28,8 @@ import 'package:bilibili/pages/message/at/index.dart';
 import 'package:bilibili/pages/message/like/index.dart';
 import 'package:bilibili/pages/message/reply/index.dart';
 import 'package:bilibili/pages/message/system/index.dart';
+import 'package:bilibili/pages/movie/view.dart';
+import 'package:bilibili/pages/movie_line/view.dart';
 import 'package:bilibili/pages/search/index.dart';
 import 'package:bilibili/pages/search_result/index.dart';
 import 'package:bilibili/pages/setting/index.dart';
@@ -178,9 +180,14 @@ class Routes {
     CustomGetPage(name: '/tvSearch', page: () => const TvSearchPage()),
     // B站出品高分好剧
     CustomGetPage(name: '/tvNavhide', page: () => const TvNavhidePage()),
+    // 电影
+    CustomGetPage(name: '/movie', page: () => const MoviePage()),
+    // 电影
+    CustomGetPage(name: '/movieLine', page: () => const MovieLinePage()),
   ];
 }
 
+// ignore: must_be_immutable
 class CustomGetPage extends GetPage<dynamic> {
   CustomGetPage({
     required super.name,

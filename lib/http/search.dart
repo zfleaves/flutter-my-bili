@@ -118,6 +118,8 @@ class SearchHttp {
           case SearchType.article:
             data = SearchArticleModel.fromJson(res.data['data']);
             break;
+          case SearchType.media_ft:
+            data = SearchMovieModel.fromJson(res.data['data']);
         }
         return {
           'status': true,

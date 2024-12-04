@@ -46,9 +46,9 @@ class TVhttp {
   }
 
   // 推荐电视剧列表
-  static Future tvList({int? coursor}) async {
+  static Future tvList({int? coursor, name = 'tv'}) async {
     var res = await Request().get(Api.rcmdTvList, data: {
-      'name': 'tv',
+      'name': name,
       'coursor': coursor,
       'new_cursor_status': true,
     });

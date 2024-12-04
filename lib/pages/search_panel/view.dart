@@ -6,6 +6,7 @@ import 'package:bilibili/pages/search_panel/controller.dart';
 import 'package:bilibili/pages/search_panel/widgets/article_panel.dart';
 import 'package:bilibili/pages/search_panel/widgets/live_panel.dart';
 import 'package:bilibili/pages/search_panel/widgets/media_bangumi_panel.dart';
+import 'package:bilibili/pages/search_panel/widgets/movie_panel.dart';
 import 'package:bilibili/pages/search_panel/widgets/user_panel.dart';
 import 'package:bilibili/pages/search_panel/widgets/video_panel.dart';
 import 'package:easy_debounce/easy_throttle.dart';
@@ -90,6 +91,8 @@ class _SearchPanelState extends State<SearchPanel>
                       return searchLivePanel(context, ctr, list);
                     case SearchType.article:
                       return searchArticlePanel(context, ctr, list);
+                    case SearchType.media_ft:
+                      return searchMoviePanel(context, ctr, list);
                     default:
                       return const SizedBox();
                   }

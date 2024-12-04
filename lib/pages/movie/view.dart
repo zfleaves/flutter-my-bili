@@ -1,7 +1,7 @@
 import 'package:bilibili/common/constants.dart';
 import 'package:bilibili/common/widgets/http_error.dart';
-import 'package:bilibili/models/tv/tv_column_type.dart';
-import 'package:bilibili/pages/tv_series/controller.dart';
+import 'package:bilibili/models/tv/movie_column_type.dart';
+import 'package:bilibili/pages/movie/controller.dart';
 import 'package:bilibili/pages/tv_series/widgets/tv_card_feed.dart';
 import 'package:bilibili/pages/tv_series/widgets/tv_card_v.dart';
 import 'package:bilibili/utils/main_stream.dart';
@@ -9,16 +9,16 @@ import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TvSeries extends StatefulWidget {
-  const TvSeries({super.key});
+class MoviePage extends StatefulWidget {
+  const MoviePage({super.key});
 
   @override
-  State<TvSeries> createState() => _TvSeriesState();
+  State<MoviePage> createState() => _MoviePageState();
 }
 
-class _TvSeriesState extends State<TvSeries>
+class _MoviePageState extends State<MoviePage>
     with AutomaticKeepAliveClientMixin {
-  final TvSeriesController _tvSeriesController = Get.put(TvSeriesController());
+  final MovieController _movieController = Get.put(MovieController());
   late Future? _futureBuilderFuture;
   late Future? _futureBuilderFutureHit;
   late ScrollController scrollController;
@@ -27,16 +27,16 @@ class _TvSeriesState extends State<TvSeries>
   @override
   void initState() {
     super.initState();
-    scrollController = _tvSeriesController.scrollController;
-    _futureBuilderFuture = _tvSeriesController.queryTvListFeed();
-    _futureBuilderFutureHit = _tvSeriesController.queryTvListHit();
+    scrollController = _movieController.scrollController;
+    _futureBuilderFuture = _movieController.queryMovieListFeed();
+    _futureBuilderFutureHit = _movieController.queryMovieListHit();
     scrollController.addListener(
       () async {
         if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200) {
           EasyThrottle.throttle('my-throttler', const Duration(seconds: 1), () {
-            _tvSeriesController.hasNext = true;
-            _tvSeriesController.onLoad();
+            _movieController.hasNext = true;
+            _movieController.onLoad();
           });
         }
         handleScrollEvent(scrollController);
@@ -49,8 +49,8 @@ class _TvSeriesState extends State<TvSeries>
     super.build(context);
     return RefreshIndicator(
       onRefresh: () async {
-        await _tvSeriesController.queryTvListHit();
-        await _tvSeriesController.onRefresh();
+        await _movieController.queryMovieListHit();
+        await _movieController.queryMovieListFeed();
       },
       child: CustomScrollView(
         controller: scrollController,
@@ -69,12 +69,13 @@ class _TvSeriesState extends State<TvSeries>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '电视剧热播榜',
+                        '电影热播榜',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       InkWell(
                         onTap: () {
-                          Get.toNamed('/tvRankTop');
+                          Get.toNamed("/tvRankTop?type=movie");
+                          // _movieController.htmlTest();
                         },
                         child: Container(
                           padding: const EdgeInsets.only(
@@ -109,7 +110,7 @@ class _TvSeriesState extends State<TvSeries>
                           return const SizedBox();
                         }
                         Map data = snapshot.data as Map;
-                        List list = _tvSeriesController.hitShowList;
+                        List list = _movieController.hitShowList;
                         if (data['status']) {
                           return Obx(() => list.isNotEmpty
                               ? ListView.builder(
@@ -133,7 +134,7 @@ class _TvSeriesState extends State<TvSeries>
                                 )
                               : const SizedBox(
                                   child: Center(
-                                    child: Text('暂无热播电视剧'),
+                                    child: Text('暂无热播电影'),
                                   ),
                                 ));
                         } else {
@@ -154,9 +155,7 @@ class _TvSeriesState extends State<TvSeries>
             height: 80,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: [
-                ...videoColumns()
-              ],
+              children: [...videoColumns()],
             ),
           )),
           SliverToBoxAdapter(
@@ -184,18 +183,18 @@ class _TvSeriesState extends State<TvSeries>
                   if (data['status']) {
                     return Obx(() {
                       return contentGrid(
-                          _tvSeriesController, _tvSeriesController.tvList);
+                          _movieController, _movieController.movieList);
                     });
                   }
                   return HttpError(
                     errMsg: data['msg'],
                     fn: () {
                       _futureBuilderFuture =
-                          _tvSeriesController.queryTvListFeed();
+                          _movieController.queryMovieListFeed();
                     },
                   );
                 } else {
-                  return contentGrid(_tvSeriesController, []);
+                  return contentGrid(_movieController, []);
                 }
               },
             ),
@@ -206,7 +205,7 @@ class _TvSeriesState extends State<TvSeries>
   }
 
   List<Widget> videoColumns() {
-    List<Widget> list = tvColumnTypeConfig
+    List<Widget> list = movieColumnTypeConfig
         .map((item) => Padding(
               padding: const EdgeInsets.only(right: 20),
               child: InkWell(
@@ -228,7 +227,10 @@ class _TvSeriesState extends State<TvSeries>
                     const SizedBox(
                       height: 5,
                     ),
-                    Text(item.label, style: Theme.of(context).textTheme.labelMedium,)
+                    Text(
+                      item.label,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    )
                   ],
                 ),
               ),
@@ -237,7 +239,7 @@ class _TvSeriesState extends State<TvSeries>
     return list;
   }
 
-  Widget contentGrid(ctr, tvList) {
+  Widget contentGrid(ctr, movieList) {
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         // 行间距
@@ -251,15 +253,15 @@ class _TvSeriesState extends State<TvSeries>
       ),
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          return tvList!.isNotEmpty
-              ? TvCardFeed(tVItem: tvList[index])
+          return movieList!.isNotEmpty
+              ? TvCardFeed(tVItem: movieList[index])
               : const SizedBox();
         },
-        childCount: tvList!.isNotEmpty ? tvList!.length : 10,
+        childCount: movieList!.isNotEmpty ? movieList!.length : 10,
       ),
     );
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }

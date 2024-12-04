@@ -141,6 +141,8 @@ dependencies:
   disable_battery_optimization: ^1.1.1
   # 展开/收起
   expandable: ^5.0.1
+  # 时间刻度组件
+  timeline_list: ^0.1.1
 
 dev_dependencies:
   flutter_test:

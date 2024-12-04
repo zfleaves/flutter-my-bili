@@ -1,6 +1,7 @@
 import 'package:bilibili/common/constants.dart';
 import 'package:bilibili/common/widgets/badge.dart';
 import 'package:bilibili/common/widgets/network_img_layer.dart';
+import 'package:bilibili/models/common/search_type.dart';
 import 'package:bilibili/models/common/sub_type.dart';
 import 'package:bilibili/utils/image_save.dart';
 import 'package:bilibili/utils/route_push.dart';
@@ -27,7 +28,8 @@ class SubPanelItem extends StatelessWidget {
     String heroTag = Utils.makeHeroTag(videoItem.mediaId);
     return InkWell(
       onTap: () {
-        RoutePush.bangumiPush(videoItem.seasonId, null, heroTag: heroTag);
+        SearchType videoType = ctr.subType == SubType.video ? SearchType.video : SearchType.media_bangumi;
+        RoutePush.bangumiPush(videoItem.seasonId, null, heroTag: heroTag, videoType: videoType);
       },
       onLongPress: () =>
           imageSaveDialog(context, videoItem, SmartDialog.dismiss),

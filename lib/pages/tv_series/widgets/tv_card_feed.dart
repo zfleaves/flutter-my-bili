@@ -1,6 +1,7 @@
 import 'package:bilibili/common/constants.dart';
 import 'package:bilibili/common/widgets/badge.dart';
 import 'package:bilibili/common/widgets/network_img_layer.dart';
+import 'package:bilibili/models/common/search_type.dart';
 import 'package:bilibili/utils/image_save.dart';
 import 'package:bilibili/utils/route_push.dart';
 import 'package:bilibili/utils/utils.dart';
@@ -17,7 +18,8 @@ class TvCardFeed extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        RoutePush.bangumiPush(tVItem.seasonId, null, heroTag: heroTag);
+        SearchType videoType = tVItem.seasonType == 5 ? SearchType.video : SearchType.media_ft;
+        RoutePush.bangumiPush(tVItem.seasonId, null, heroTag: heroTag, videoType: videoType);
       },
       onLongPress: () => imageSaveDialog(context, tVItem, SmartDialog.dismiss),
       child: Column(

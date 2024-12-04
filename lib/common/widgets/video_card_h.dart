@@ -6,6 +6,7 @@ import 'package:bilibili/common/widgets/stat/view.dart';
 import 'package:bilibili/http/search.dart';
 import 'package:bilibili/http/user.dart';
 import 'package:bilibili/http/video.dart';
+import 'package:bilibili/models/common/search_type.dart';
 import 'package:bilibili/utils/constants.dart';
 import 'package:bilibili/utils/feed_back.dart';
 import 'package:bilibili/utils/image_save.dart';
@@ -59,11 +60,11 @@ class VideoCardH extends StatelessWidget {
             final String lastPathSegment = redirectUrl.split('/').last;
             if (lastPathSegment.contains('ss')) {
               RoutePush.bangumiPush(
-                  Utils.matchNum(lastPathSegment).first, null);
+                  Utils.matchNum(lastPathSegment).first, null, videoType: SearchType.video);
             }
             if (lastPathSegment.contains('ep')) {
               RoutePush.bangumiPush(
-                  null, Utils.matchNum(lastPathSegment).first);
+                  null, Utils.matchNum(lastPathSegment).first, videoType: SearchType.video);
             }
             return;
           }

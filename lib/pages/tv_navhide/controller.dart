@@ -47,7 +47,8 @@ class TvNavhideController extends GetxController {
           item.isFollow = index >= 0 ? 1 : 0;
         }
         navhideList.value = result['data'].seasons;
-        if (id != '70314') { // 美剧没有up主
+        print(result['data'].upInfo);
+        if (result['data'].upInfo != null) { // 美剧没有up主
           upInfo.value = result['data'].upInfo;
           isFollowed.value = upInfo.value.isFollow ?? 0;
           followedMsg.value = isFollowed.value == 1 ? '已关注' : '未关注';

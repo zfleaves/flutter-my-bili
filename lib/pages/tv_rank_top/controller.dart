@@ -14,9 +14,15 @@ class TvRankTopController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    String type = Get.parameters['type'] ?? 'tv';
     rankTabs.value = TvRankType.values
         .map((type) => {'label': type.label, 'id': type.id, 'seasonType': type.seasonType})
         .toList();
+    int index = rankTabs.indexWhere((item) => item['id'] == type);
+    if (index >= 0) {
+      tabIndex = index;
+      seasonType.value = rankTabs[index]['seasonType'];
+    }
   }
 
   // 查询电视剧热播列表

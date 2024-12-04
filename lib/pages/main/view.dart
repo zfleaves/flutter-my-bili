@@ -5,6 +5,7 @@ import 'package:bilibili/pages/dynamics/index.dart';
 import 'package:bilibili/pages/home/index.dart';
 import 'package:bilibili/pages/main/index.dart';
 import 'package:bilibili/pages/media/index.dart';
+import 'package:bilibili/pages/movie/index.dart';
 import 'package:bilibili/pages/rank/index.dart';
 import 'package:bilibili/pages/tv_series/index.dart';
 import 'package:bilibili/utils/event_bus.dart';
@@ -29,6 +30,7 @@ class _MainAppState extends State<MainApp> {
   final DynamicsController _dynamicController = Get.put(DynamicsController());
   final MediaController _mediaController = Get.put(MediaController());
   final TvSeriesController _tvSeriesController = Get.put(TvSeriesController());
+  final MovieController _movieController = Get.put(MovieController());
 
   int? _lastSelectTime; // 上次点击时间
   Box setting = GStrorage.setting;
@@ -113,6 +115,21 @@ class _MainAppState extends State<MainApp> {
       _tvSeriesController.flag = true;
     } else {
       _tvSeriesController.flag = false;
+    }
+
+    if (currentPage is MoviePage) {
+      if (_tvSeriesController.flag) {
+        // 单击返回顶部 双击并刷新
+        if (DateTime.now().millisecondsSinceEpoch - _lastSelectTime! < 500) {
+          _movieController.onRefresh();
+        } else {
+          _movieController.animateToTop();
+        }
+        _lastSelectTime = DateTime.now().millisecondsSinceEpoch;
+      }
+      _movieController.flag = true;
+    } else {
+      _movieController.flag = false;
     }
   }
 

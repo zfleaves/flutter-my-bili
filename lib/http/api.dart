@@ -572,4 +572,7 @@ class Api {
 
   // 全站搜索
   static const String tvNavhideList = '/pgc/web/playlist';
+
+  // 最新上映
+  static const String timelineList = '/pgc/web/timeline/online';
 }

@@ -657,7 +657,8 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                             return CustomScrollView(
                               key: const PageStorageKey<String>('简介'),
                               slivers: <Widget>[
-                                if (vdCtr.videoType == SearchType.video) ...[
+                                if (vdCtr.videoType == SearchType.video ||
+                                    vdCtr.videoType == SearchType.media_ft) ...[
                                   VideoIntroPanel(bvid: vdCtr.bvid),
                                 ] else if (vdCtr.videoType ==
                                     SearchType.media_bangumi) ...[
@@ -674,8 +675,13 @@ class _VideoDetailPageState extends State<VideoDetailPage>
                                   ),
                                 ),
                                 if (vdCtr.videoType == SearchType.video &&
-                                    vdCtr.enableRelatedVideo)
+                                    vdCtr.enableRelatedVideo) ...[
                                   const RelatedVideoPanel(),
+                                ],
+                                if (vdCtr.videoType == SearchType.media_ft &&
+                                    vdCtr.enableRelatedVideo) ...[
+                                  const RelatedVideoPanel(),
+                                ]
                               ],
                             );
                           },

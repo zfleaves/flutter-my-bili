@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:bilibili/common/constants.dart';
 import 'package:bilibili/http/api.dart';
+import 'package:bilibili/http/html.dart';
 import 'package:bilibili/http/init.dart';
 import 'package:bilibili/models/common/reply_type.dart';
 import 'package:bilibili/models/home/rcmd/result.dart';
@@ -14,6 +15,7 @@ import 'package:bilibili/models/video_detail_res.dart';
 import 'package:bilibili/utils/recommend_filter.dart';
 import 'package:bilibili/utils/subtitle.dart';
 import 'package:bilibili/utils/wbi_sign.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import '../utils/storage.dart';
 
@@ -176,6 +178,24 @@ class VideoHttp {
           'status': true,
           'data': PlayUrlModel.fromJson(res.data['data'])
         };
+      } else if (res.data['code'] == -404) {
+        int seasonId  = int.parse(Get.parameters['seasonId']!);
+        var movieRes = await HtmlHttp.reqHtmlMovie(seasonId: seasonId);
+        if (movieRes['code'] == 0) {
+          return {
+            'status': true,
+            'data': PlayUrlModel.fromJson(movieRes['result']['video_info']),
+            'code': movieRes['code'],
+            'msg': movieRes['message'],
+          };
+        } else {
+          return {
+            'status': false,
+            'data': [],
+            'code': movieRes['code'],
+            'msg': movieRes['message'],
+          };
+        }
       } else {
         return {
           'status': false,
