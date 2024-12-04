@@ -75,8 +75,9 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
         .indexOf((a['type'] as TabType).id)
         .compareTo(tabbarSort.indexOf((b['type'] as TabType).id)));
     tabs.value = defaultTabs;
-    if (tabbarSort.contains(TabType.movie.id)) {
-      initialIndex.value = tabbarSort.indexOf(TabType.movie.id);
+    String tabbarDefaultId = settingStorage.get(SettingBoxKey.tabbarDefaultId, defaultValue: TabType.rcmd.id);
+    if (tabbarSort.contains(tabbarDefaultId)) {
+      initialIndex.value = tabbarSort.indexOf(tabbarDefaultId);
     } else {
       initialIndex.value = 0;
     }

@@ -155,6 +155,7 @@ class SettingBoxKey {
       hideSearchBar = 'hideSearchBar', // 收起顶栏
       hideTabBar = 'hideTabBar', // 收起底栏
       tabbarSort = 'tabbarSort', // 首页tabbar
+      tabbarDefaultId = 'tabbarDefaultId', // 首页tabbar默认展示
       dynamicBadgeMode = 'dynamicBadgeMode',
       enableGradientBg = 'enableGradientBg',
       navBarSort = 'navBarSort',

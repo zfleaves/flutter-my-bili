@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bilibili/models/common/dynamic_badge_mode.dart';
 import 'package:bilibili/models/common/nav_bar_config.dart';
+import 'package:bilibili/models/common/tab_type.dart';
 import 'package:bilibili/models/common/theme_type.dart';
 import 'package:bilibili/pages/setting/index.dart';
 import 'package:bilibili/pages/setting/pages/color_select.dart';
@@ -278,6 +279,14 @@ class _StyleSettingState extends State<StyleSetting> {
             title: Text('默认启动页', style: titleStyle),
             subtitle: Obx(() => Text(
                 '当前启动页：${defaultNavigationBars.firstWhere((e) => e['id'] == settingController.defaultHomePage.value)['label']}',
+                style: subTitleStyle)),
+          ),
+          ListTile(
+            dense: false,
+            onTap: () => settingController.setDefaultHomeTabbar(context),
+            title: Text('首页默认展示页', style: titleStyle),
+            subtitle: Obx(() => Text(
+                '当前展示页：${tabsConfig.firstWhere((e) => e['id'] == settingController.defaultTabbar.value)['label']}',
                 style: subTitleStyle)),
           ),
           ListTile(

@@ -49,7 +49,9 @@ void main() async {
   Catcher2(
       releaseConfig: releaseConfig,
       runAppFunction: () {
-        runApp(const MyApp());
+        runApp(const RestartWidget(
+          child: MyApp(),
+        ));
       });
 
   // 小白条、导航栏沉浸
@@ -66,6 +68,38 @@ void main() async {
 
   // 外部应用跳转
   BillSchame.init();
+}
+
+class RestartWidget extends StatefulWidget {
+  const RestartWidget({super.key, required this.child});
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+      print(key);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: key,
+      child: widget.child,
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

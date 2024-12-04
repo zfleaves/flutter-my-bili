@@ -1,6 +1,8 @@
 import 'package:bilibili/http/init.dart';
+import 'package:bilibili/main.dart';
 import 'package:bilibili/models/common/dynamic_badge_mode.dart';
 import 'package:bilibili/models/common/nav_bar_config.dart';
+import 'package:bilibili/models/common/tab_type.dart';
 import 'package:bilibili/models/common/theme_type.dart';
 import 'package:bilibili/pages/main/controller.dart';
 import 'package:bilibili/pages/setting/widgets/select_dialog.dart';
@@ -25,6 +27,7 @@ class SettingController extends GetxController {
   var userInfo;
   Rx<DynamicBadgeMode> dynamicBadgeType = DynamicBadgeMode.number.obs;
   RxInt defaultHomePage = 0.obs;
+  RxString defaultTabbar = ''.obs;
 
   @override
   void onInit() {
@@ -44,6 +47,7 @@ class SettingController extends GetxController {
         defaultValue: DynamicBadgeMode.number.code)];
     defaultHomePage.value =
         setting.get(SettingBoxKey.defaultHomePage, defaultValue: 0);
+    defaultTabbar.value = setting.get(SettingBoxKey.tabbarDefaultId, defaultValue: TabType.rcmd.id);
   }
 
   // 退出登录
@@ -131,6 +135,30 @@ class SettingController extends GetxController {
       defaultHomePage.value = result;
       setting.put(SettingBoxKey.defaultHomePage, result);
       SmartDialog.showToast('设置成功，重启生效');
+    }
+  }
+
+
+  // 设置默认启动页
+  setDefaultHomeTabbar(context) async {
+    int index = tabsConfig.indexWhere((v) => v['id'] == defaultTabbar.value);
+    int? result = await showDialog(
+      context: context,
+      builder: (context) {
+        return SelectDialog<int>(
+            title: '首页启动页',
+            value: index,
+            values: tabsConfig.map((e) {
+              int value = tabsConfig.indexWhere((v) => v['id'] == e['id']);
+              return {'title': e['label'], 'value': value};
+            }).toList());
+      },
+    );
+    if (result != null) {
+      defaultTabbar.value = tabsConfig[result]['id'];
+      setting.put(SettingBoxKey.tabbarDefaultId, defaultTabbar.value);
+      SmartDialog.showToast('设置成功，重启生效');
+      RestartWidget.restartApp(context);
     }
   }
 }
